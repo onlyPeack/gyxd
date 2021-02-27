@@ -1,0 +1,1392 @@
+<template>
+  <div class="daily-div">
+    <el-container>
+      <el-header>
+        <el-input clearable class="filter-item" style="width: 200px;" placeholder="关键字" v-model="listQuery.content"
+                  @keyup.enter.native="handleFilter">
+        </el-input>
+        <el-select clearable placeholder="日志类型" style="width: 200px" class="filter-item" v-model="listQuery.type">
+          <el-option v-for="item in typeOptions" :key="item.value" :label="item.label"
+                     :value="item.value"></el-option>
+        </el-select>
+        <el-input clearable class="filter-item" style="width: 200px;" placeholder="发送人" v-model="listQuery.receiveName"
+                  @keyup.enter.native="handleFilter">
+        </el-input>
+        <el-input clearable class="filter-item" style="width: 200px;" placeholder="抄送人" v-model="listQuery.copyName"
+                  @keyup.enter.native="handleFilter">
+        </el-input>
+        <el-date-picker clearable style="width: 200px;" v-model="listQuery.beginDate" type="date"
+                        placeholder="制单开始时间" value-format="yyyy-MM-dd 00:00:00" format="yyyy-MM-dd"></el-date-picker>
+        <el-date-picker clearable style="width: 200px;" v-model="listQuery.endDate" type="date"
+                        placeholder="制单结束时间" value-format="yyyy-MM-dd 23:59:59" format="yyyy-MM-dd"></el-date-picker>
+        <el-button class="filter-item" type="primary" @click="handleFilter" style="margin-left: 30px;">查询
+        </el-button>
+        <el-button class="filter-item" type="warning" @click="resetListQuery">重置</el-button>
+        <el-button class="filter-item" type="success" icon="el-icon-plus"
+                   @click="handleCreateShow">新建
+        </el-button>
+      </el-header>
+      <el-container>
+        <!--列表-->
+        <el-aside width="40%">
+          <div class="daily-item" v-if="list && list.length>0" v-for="item in list" :key="item.id"
+               @click.stop="handleDetailsShow(item.id)">
+            <el-card>
+              <div slot="header">
+                <div class="header-img"></div>
+                <div class="header-title">
+                  <span class="hoverClass" @click.stop="handlePersonalShow">{{item.crtUserName}}</span>
+                  <!--<span>{{item.crtTime}}</span>-->
+                </div>
+                <span style="float: right; padding: 3px 0">
+                   {{item.type==1?'日志':item.type==2?'周计划':'月计划'}}
+                </span>
+              </div>
+              <div style="padding: 15px; font-size: 16px">
+                <span class="hoverClass" @click.stop="handleDetailsShow(item.id)">{{item.content}}</span>
+                <div class="card-bottom">
+                  <span>发送至：{{item.receiveName}}</span><br>
+                  <span>{{item.crtTime}}</span>
+                  <div class="card-function">
+                    <el-button type="text" @click.stop="handleUpdateShow(item.id)"><i class="iconfont icon-tianxie"></i>编辑
+                    </el-button>
+                    <el-button type="text" @click.stop="openDailyRecordDialog(item.id)"><i
+                      class="iconfont icon--pingfen"></i>评分
+                    </el-button>
+                    <el-button type="text" @click.stop="handleDel(item.id)"><i class="iconfont icon-shanchu3"></i>删除
+                    </el-button>
+                    <el-button type="text" @click.stop="handleReplyShow(item.id)"><i
+                      class="iconfont icon-icon_huifu-xian"></i>回复
+                    </el-button>
+                  </div>
+                </div>
+              </div>
+            </el-card>
+          </div>
+        </el-aside>
+        <el-main>
+          <!--创建-->
+          <div class="create-daily" v-if="!detailsOrCreateVisible">
+            <div class="type-title">
+                <span>
+                  <i class="iconfont icon-chakantiezihuifu"></i>发起日志
+                </span>
+            </div>
+            <el-form ref="dataForm" :model="dataForm" label-width="80px" size="medium" :rules="rules">
+              <div class="right-top">
+                <el-tabs v-model="activeName" :stretch="true" @tab-click="handleTabClick">
+                  <el-tab-pane label="日志" name="first" :disabled="disableTabs && activeName!='first'">
+                    <table class="daily-table">
+                      <tr>
+                        <td>
+                          <el-form-item class="span-item" prop="content">
+                            <el-input v-model="dataForm.content" type="textarea" :rows="5"></el-input>
+                          </el-form-item>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <el-form-item label="日期:" prop="beginDate">
+                            <el-date-picker v-model="beginDate1" type="date"
+                                            placeholder="选择日期" @change="handleTabClick"></el-date-picker>
+                          </el-form-item>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <el-form-item label="发送到:" prop="receiveName">
+                            <span @click="handleUserShow('receive')">
+                              <svg-icon icon-class="add"></svg-icon>
+                            </span>
+                            <el-tag v-for="(tag,tagIndex) in receiveArr" :key="tag.id" closable size="medium"
+                                    @close="handleUserDel(tagIndex,'receive')">
+                              {{tag.name}}
+                            </el-tag>
+                          </el-form-item>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <el-form-item label="抄送:">
+                            <span @click="handleUserShow('copy')">
+                              <svg-icon icon-class="add"></svg-icon>
+                            </span>
+                            <el-tag v-for="(tag,tagIndex) in copyArr" :key="tag.id" closable size="medium"
+                                    @close="handleUserDel(tagIndex,'copy')">
+                              {{tag.name}}
+                            </el-tag>
+                          </el-form-item>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <el-form-item label="附件:">
+                            <el-upload class="attachment-upload" :action="uploadPath" :show-file-list="true"
+                                       :on-success="handleFileSuccess"
+                                       :on-remove="handleFileRemove"
+                                       :file-list="attachmentList">
+                              <svg-icon icon-class="add"></svg-icon>
+                            </el-upload>
+                          </el-form-item>
+                        </td>
+                      </tr>
+                    </table>
+                  </el-tab-pane>
+                  <el-tab-pane label="周计划" name="second" :disabled="disableTabs && activeName!='second'">
+                    <table class="daily-table">
+                      <tr>
+                        <td>
+                          <el-form-item class="span-item" prop="content">
+                            <el-input v-model="dataForm.content" type="textarea" :rows="5"></el-input>
+                          </el-form-item>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <el-form-item label="日期:" prop="beginDate">
+                            <el-date-picker v-model="beginDate2" type="week" format="yyyy 第 WW 周"
+                                            placeholder="选择周" @change="handleTabClick">
+                            </el-date-picker>
+                          </el-form-item>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <el-form-item label="发送到:" prop="receiveName">
+                            <span @click="handleUserShow('receive')">
+                              <svg-icon icon-class="add"></svg-icon>
+                            </span>
+                            <el-tag v-for="(tag,tagIndex) in receiveArr" :key="tag.id" closable size="medium"
+                                    @close="handleUserDel(tagIndex,'receive')">
+                              {{tag.name}}
+                            </el-tag>
+                          </el-form-item>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <el-form-item label="抄送:">
+                          <span @click="handleUserShow('copy')">
+                            <svg-icon icon-class="add"></svg-icon>
+                          </span>
+                            <el-tag v-for="(tag,tagIndex) in copyArr" :key="tag.id" closable size="medium"
+                                    @close="handleUserDel(tagIndex,'copy')">
+                              {{tag.name}}
+                            </el-tag>
+                          </el-form-item>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <el-form-item label="附件:">
+                            <el-upload class="attachment-upload" :action="uploadPath" :show-file-list="true"
+                                       :on-success="handleFileSuccess"
+                                       :on-remove="handleFileRemove"
+                                       :file-list="attachmentList">
+                              <svg-icon icon-class="add"></svg-icon>
+                            </el-upload>
+                          </el-form-item>
+                        </td>
+                      </tr>
+                    </table>
+                  </el-tab-pane>
+                  <el-tab-pane label="月计划" name="third" :disabled="disableTabs && activeName!='third'">
+                    <table class="daily-table">
+                      <tr>
+                        <td>
+                          <el-form-item class="span-item" prop="content">
+                            <el-input v-model="dataForm.content" type="textarea" :rows="5"></el-input>
+                          </el-form-item>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <el-form-item label="日期:" prop="beginDate">
+                            <el-date-picker v-model="beginDate3" type="month"
+                                            placeholder="选择月" @change="handleTabClick"></el-date-picker>
+                          </el-form-item>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <el-form-item label="发送到:" prop="receiveName">
+                            <span @click="handleUserShow('receive')">
+                              <svg-icon icon-class="add"></svg-icon>
+                            </span>
+                            <el-tag v-for="(tag,tagIndex) in receiveArr" :key="tag.id" closable size="medium"
+                                    @close="handleUserDel(tagIndex,'receive')">
+                              {{tag.name}}
+                            </el-tag>
+                          </el-form-item>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <el-form-item label="抄送:">
+                          <span @click="handleUserShow('copy')">
+                            <svg-icon icon-class="add"></svg-icon>
+                          </span>
+                            <el-tag v-for="(tag,tagIndex) in copyArr" :key="tag.id" closable size="medium"
+                                    @close="handleUserDel(tagIndex,'copy')">
+                              {{tag.name}}
+                            </el-tag>
+                          </el-form-item>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <el-form-item label="附件:">
+                            <el-upload class="attachment-upload" :action="uploadPath" :show-file-list="true"
+                                       :on-success="handleFileSuccess"
+                                       :on-remove="handleFileRemove"
+                                       :file-list="attachmentList">
+                              <svg-icon icon-class="add"></svg-icon>
+                            </el-upload>
+                          </el-form-item>
+                        </td>
+                      </tr>
+                    </table>
+                  </el-tab-pane>
+                </el-tabs>
+              </div>
+              <div class="right-footer">
+                <span class="one">
+                  <!--<el-upload :action="uploadPath" :show-file-list="true" :on-success="uploadPicUrl"
+                             :on-remove="handleFileRemove" :file-list="attachmentList">
+                    <el-button slot="trigger" type="text"><i class="iconfont icon-fujian2"></i>附件</el-button>
+                  </el-upload>-->
+                </span>
+                <span class="two">
+                  <el-button @click="handleCreateCancel">取消</el-button>
+                  <el-button type="primary" @click="handleSubmit" :loading="isLoading">发送</el-button>
+                </span>
+              </div>
+            </el-form>
+          </div>
+          <!--详情-->
+          <div class="daily-details" v-if="detailsOrCreateVisible && detailData">
+            <div class="right-main" :style="{height: clientHeight +'px'}">
+              <div class="type-title">
+                <span>
+                  <i class="iconfont icon-rizhiriqi"></i>
+                  {{detailData.type==1?'日志':detailData.type==2?'周计划':'月计划'}}
+                </span>
+              </div>
+              <div class="right-content">
+                <div class="header-item">
+                  <div class="header-img"></div>
+                  <div class="header-title">
+                    <span class="hoverClass" @click="handlePersonalShow">{{detailData.crtUserName}}</span>
+                    <span>{{detailData.crtTime}}</span>
+                    <span>发起</span>
+                  </div>
+                </div>
+                <div class="header-cont">
+                  {{detailData.content}}
+                </div>
+              </div>
+              <div class="main-bottom">
+                <ul>
+                  <li>
+                    日志时间：{{detailData.beginDate}}
+                    {{detailData.endDate ? ' 至 '+detailData.endDate:''}}
+                    {{detailData.type==1?'（日志）':detailData.type==2?'（周计划）':'（月计划）'}}
+                  </li>
+                  <li>发送到：{{detailData.receiveName}}</li>
+                  <li>抄送到：{{detailData.copyName}}</li>
+                  <li v-if="detailData.score">
+                    评分：
+                    <i class="iconfont icon-pingfenxingxing icon-pingfenxingxing-active"
+                       v-for="i in parseInt(detailData.score/2)" :key="99999-i"></i>
+                    <i v-if="parseInt(detailData.score/2)!=5">
+                      <i class="iconfont icon-bankexing icon-pingfenxingxing-active"
+                         v-if="detailData.score%2!=0"></i>
+                      <i class="iconfont icon-pingfenxingxing"
+                         v-if="detailData.score%2!=0"
+                         v-for="i in 4-parseInt(detailData.score/2)" :key="10000-i"></i>
+                      <i class="iconfont icon-pingfenxingxing"
+                         v-if="detailData.score%2==0"
+                         v-for="i in 5-parseInt(detailData.score/2)" :key="10000-i"></i>
+                    </i>
+                    {{detailData.score}}分
+                  </li>
+                  <li v-if="detailData.score">评价：{{detailData.scoreWord?detailData.scoreWord:'无评价'}}</li>
+                </ul>
+
+                <div class="read-status" v-if="detailData.status">
+                   <span v-if="detailData.status === 1">
+                     <svg-icon icon-class="readState" color="gray"></svg-icon>
+                     <span>未阅</span>
+                   </span>
+                  <span v-if="detailData.status === 2">
+                    <el-row>
+                      <el-col :span="12">
+                        <svg-icon icon-class="readState" color="#409EFF"></svg-icon>
+                      <span>已阅</span>
+                      </el-col>
+                      <!--<el-col :span="12">
+                        <span class="text-right">
+                          <span>马先生</span>
+                          <span>等1人已阅</span>
+                        </span>
+                      </el-col>-->
+                    </el-row>
+                   </span>
+                </div>
+                <!--附件-->
+                <div class="annex-div" v-if="detailData.attachment && detailData.attachment.length>0">
+                  <el-row>
+                    <el-col :span="22">附件</el-col>
+                    <el-col :span="2">
+                      <el-button type="text" class="text-right">全部下载</el-button>
+                    </el-col>
+                  </el-row>
+
+                  <el-row v-for="atta in detailData.attachment" :key="atta.uid" class="annex-item">
+                    <el-col :span="16">
+                      <i class="el-icon-document"></i>
+                      <span style="margin-left: 20px">{{atta.name}}</span>
+                    </el-col>
+                    <el-col :span="8">
+                      <span class="annex-bottom">
+                         <!--<a :href="atta.url" :download="atta.name" mce_href="#">下载</a>-->
+                         <el-button type="text" @click="handleAttachmentDownLoad(atta.url)"><svg-icon
+                           icon-class="import1"></svg-icon>下载</el-button>
+                         <el-button type="text"><svg-icon icon-class="export"></svg-icon>归档</el-button>
+                      </span>
+                    </el-col>
+                  </el-row>
+                </div>
+                <!--评论-->
+                <div class="reply-div" v-if="detailData.comments && detailData.comments.length>0"
+                     v-for="(comment,commentIdx) in detailData.comments" :key="commentIdx">
+                  <div class="header-item">
+                    <div class="notice-img"></div>
+                    <div class="header-title">
+                      <span><a href="javascript:void(0)" @click="handlePersonalShow">{{comment.fromUserName}}</a></span>
+                      <span v-if="comment.toUser"> 回复 <a href="javascript:void(0)" @click="handlePersonalShow">{{comment.toUserName}}</a> </span>
+                      <span class="reply-time">
+                        <span>{{comment.crtTime}}</span>
+                        <el-button type="text"
+                                   @click="handleReplyShow(detailData.id,comment.id,comment.crtUserId,comment.fromUserName)">
+                          回复
+                        </el-button>
+                      </span>
+
+                    </div>
+                  </div>
+                  <div class="header-cont">
+                    {{comment.content}}
+                  </div>
+                  <!--评论中的附件-->
+                  <el-row v-if="comment.attachment && comment.attachment.length>0" v-for="atta in comment.attachment"
+                          :key="atta.uid" class="reply-annex-item">
+                    <el-col :span="16">
+                      <i class="el-icon-document"></i>
+                      <span style="margin-left: 20px">{{atta.name}}</span>
+                    </el-col>
+                    <el-col :span="8">
+                      <span class="reply-annex-cz">
+                         <el-button type="text" @click="handleAttachmentDownLoad(atta.url)"><svg-icon
+                           icon-class="import1"></svg-icon>下载</el-button>
+                         <el-button type="text"><svg-icon icon-class="export"></svg-icon>归档</el-button>
+                      </span>
+                    </el-col>
+                  </el-row>
+                </div>
+                <!--<div class="record-div">
+                  <el-row>
+                    <el-col :span="16"> 哈哈哈【编辑】自己的日志</el-col>
+                    <el-col :span="8">
+                      <span class="text-right">3月20日 12:20</span>
+                    </el-col>
+                  </el-row>
+                </div>-->
+              </div>
+            </div>
+            <div class="right-footer" v-if="!replyVisible">
+              <span class="one">
+                <el-button type="text" @click="handleUpdateShow(detailData.id)"><i class="iconfont icon-tianxie"></i>编辑</el-button>
+                <el-button type="text" @click="openDailyRecordDialog(detailData.id)"><i
+                  class="iconfont icon--pingfen"></i>评分</el-button>
+                <el-button type="text" @click="handleDel(detailData.id)"><i
+                  class="iconfont icon-shanchu3"></i>删除</el-button>
+              </span>
+              <span class="two">
+                <el-button type="text" @click="handleReplyShow(detailData.id)"><i
+                  class="iconfont icon-icon_huifu-xian"></i>回复</el-button>
+              </span>
+            </div>
+            <!--回复框-->
+            <div class="right-footer" v-if="replyVisible">
+              <el-input type="textarea" :autosize="{ minRows: 2}"
+                        style="width: 100%; margin-bottom: 10px" v-model="comment.content"
+                        :placeholder="commentToUser ? '回复'+commentToUser+'：':'回复：'">
+              </el-input>
+              <span class="one">
+                <!--<el-button type="text" style="vertical-align: top;" @click=""><i-->
+                <!--class="iconfont icon-aite"></i>抄送11</el-button>-->
+                <el-upload class="attachment-upload" :action="uploadPath" :show-file-list="true"
+                           :on-success="handleFileSuccess"
+                           :on-remove="handleFileRemove"
+                           :file-list="attachmentList">
+                  <el-button slot="trigger" type="text"><i class="iconfont icon-fujian2"></i>附件</el-button>
+                </el-upload>
+              </span>
+              <span class="two">
+                <el-button @click="handleReplyCancel">取消</el-button>
+                <el-button type="primary" @click="handleReplySubmit" :loading="isLoading">发送</el-button>
+              </span>
+            </div>
+          </div>
+        </el-main>
+      </el-container>
+    </el-container>
+
+    <!-- 个人动态弹窗 -->
+    <el-dialog title="个人动态" :visible.sync="personalDialogVisible" width="70%" class="personalDynamicsDialog"
+               :before-close="handlePersonalCancel">
+      <personal-dynamics-dialog></personal-dynamics-dialog>
+    </el-dialog>
+
+    <!--发送、抄送-->
+    <el-dialog title="请选择人员" :visible.sync="userVisible" append-to-body>
+      <user-dialog @closeUserDialog="closeUserDialog" :isSingle="true"
+                   ref="userDialog"></user-dialog>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="handleUserCancel">取 消</el-button>
+        <el-button type="primary" @click="handleUserSubmit">确 定</el-button>
+      </span>
+    </el-dialog>
+
+    <!--评分-->
+    <daily-record :dialogVisible="dailyRecordDialogVisible" @dailyRecordSubmitSuccess="dailyRecordSubmitSuccess"
+                  @closeDailyRecordDialog="closeDailyRecordDialog" :id="dailyId"
+                  v-if="dailyRecordDialogVisible"></daily-record>
+  </div>
+</template>
+
+<script>
+  import PersonalDynamicsDialog from "../personalDynamicsDialog";
+  import dailyRecord from "../components/dailyRecord";
+  import userDialog from '@/components/ERP/User/user';
+  import {page, addObj, getObj, putObj, delObj, addComment, readStatus} from '@/api/erp/oa/daily';
+  import {uploadPath, downloadPath} from '@/api/erp/goods/storage'
+
+  export default {
+    name: "daily",
+    components: {
+      PersonalDynamicsDialog,
+      userDialog,
+      dailyRecord
+    },
+    data() {
+      return {
+        isLoading:false,
+        listQuery: {
+          type: undefined,
+          receiveName: undefined,
+          copyName: undefined,
+          content: undefined,
+          beginDate: undefined,
+          endDate: undefined
+        },
+        typeOptions: [
+          {
+            value: 1,
+            label: '日志',
+          }, {
+            value: 2,
+            label: '周计划',
+          }, {
+            value: 3,
+            label: '月计划',
+          }
+        ],
+        detailsOrCreateVisible: true,
+        replyVisible: false,
+        userVisible: false,
+        personalDialogVisible: false,
+        dailyRecordDialogVisible: false,
+        clientHeight: 300,
+        activeName: 'first',
+        receiveArr: [],
+        copyArr: [],
+        sortRuleOptions: [
+          {
+            value: "1",
+            label: '按发起时间排序',
+          }, {
+            value: "2",
+            label: '按最后操作时间排序',
+          }
+        ],
+        sortValue: '1',
+        dataForm: {
+          beginDate: new Date(),
+          endDate: undefined,
+          type: 1,
+          content: undefined,
+          receive: undefined,
+          receiveName: undefined,
+          copy: undefined,
+          copyName: undefined,
+          attachment: undefined,
+        },
+        rules: {
+          content: [
+            {
+              required: true,
+              message: '请输入正文',
+              trigger: 'blur'
+            }
+          ],
+          beginDate: [
+            {
+              required: true,
+              message: '请选择日期',
+              trigger: 'blur'
+            }
+          ],
+          receiveName: [
+            {
+              required: true,
+              message: '请选择发送人',
+              trigger: 'blur'
+            }
+          ]
+        },
+        detailData: undefined,
+        beginDate1: new Date(),
+        beginDate2: new Date(),
+        beginDate3: new Date(),
+        userType: undefined,
+        list: [],
+        comment: {
+          sourceId: undefined,
+          parentId: undefined,
+          fromUser: this.$store.state.user.id,
+          fromUserName: this.$store.state.user.name,
+          toUser: undefined,
+          toUserName: undefined,
+          content: undefined,
+          attachment: undefined
+        },
+        disableTabs: false,
+        commentToUser: '',
+        uploadPath,
+        attachmentList: undefined,
+        commentAttachmentList: undefined,
+        dailyId: undefined
+      }
+    },
+    component: {
+      'personalDialog': () => import('@/views/erp/oa/personalDynamicsDialog'),
+    },
+    mounted() {
+      this.changeDivHeight();
+      this.getList();
+
+      const _this = this;
+      window.onresize = function () {
+        _this.changeDivHeight();
+      }
+    },
+    updated() {
+      this.changeDivHeight();
+    },
+    methods: {
+      changeDivHeight() {
+        this.clientHeight = (document.body.clientHeight - 220) * 0.98;
+      },
+      getList(id) {
+        page(this.listQuery).then(response => {
+          this.list = response.records;
+          if (response.records.length > 0) {
+            if (id) {
+              this.handleDetailsShow(id);
+            } else {
+              this.handleDetailsShow(this.list[0].id);
+            }
+          } else {
+            this.detailData = undefined;
+          }
+        });
+      },
+      resetListQuery() {
+        this.listQuery = {
+          type: undefined,
+          receiveName: undefined,
+          copyName: undefined,
+          content: undefined,
+          beginDate: undefined,
+          endDate: undefined
+        };
+        this.getList();
+      },
+      handleFilter() {
+        this.getList();
+      },
+      handleTabClick() {
+        if (this.activeName == 'first') {
+          this.dataForm.type = 1;
+          this.dataForm.beginDate = this.beginDate1;
+          this.dataForm.endDate = undefined;
+        } else if (this.activeName == 'second') {
+          this.dataForm.type = 2;
+          this.dataForm.beginDate = this.beginDate2;
+          var date = this.beginDate2;
+          this.dataForm.endDate = date ? new Date(date.getFullYear(), date.getMonth(), date.getDate() + 6) : undefined;
+        } else if (this.activeName == 'third') {
+          this.dataForm.type = 3;
+          this.dataForm.beginDate = this.beginDate3;
+          this.dataForm.endDate = undefined;
+        }
+      },
+
+      /*创建*/
+      resetDataForm() {
+        this.dataForm = {
+          beginDate: new Date(),
+          endDate: undefined,
+          type: 1,
+          content: undefined,
+          receive: undefined,
+          receiveName: undefined,
+          copy: undefined,
+          copyName: undefined,
+          attachment: undefined,
+        };
+        this.beginDate1 = new Date();
+        this.beginDate2 = new Date();
+        this.beginDate3 = new Date();
+        this.activeName = 'first';
+        this.receiveArr = [];
+        this.copyArr = [];
+        this.attachmentList = [];
+      },
+      handleCreateShow() {
+        this.detailsOrCreateVisible = false;
+        this.replyVisible = false;
+        this.disableTabs = false;
+        this.resetDataForm();
+      },
+      handleCreateCancel() {
+        /*this.detailsOrCreateVisible = true;
+        this.disableTabs=false;
+        this.resetDataForm();*/
+      },
+      handleSubmit() {
+        this.isLoading = true;
+        this.$refs.dataForm.validate(valid => {
+          if (valid) {
+            if (this.dataForm.id) {
+              this.handleUpdate();
+            } else {
+              this.handleCreate();
+            }
+          } else {
+            this.isLoading = false;
+            return false
+          }
+        })
+      },
+      handleCreate() {
+        if (this.attachmentList && this.attachmentList.length > 0) {
+          this.dataForm.attachment = this.attachmentList;
+        } else {
+          this.dataForm.attachment = undefined;
+        }
+
+        addObj(this.dataForm).then(response => {
+          this.isLoading = false;
+          if (response.code == '2000') {
+            this.$notify({
+              title: '成功',
+              message: '操作成功',
+              type: 'success',
+              duration: 2000
+            });
+            this.getList();
+            this.resetDataForm();
+          } else {
+            this.$notify({
+              title: '失败',
+              message: response.msg,
+              type: 'warning',
+              duration: 2000
+            })
+          }
+        })
+      },
+      handleUpdateShow(id) {
+        getObj(id).then(response => {
+          this.dataForm = response.data;
+          this.detailsOrCreateVisible = false;
+          this.disableTabs = true;
+          if (response.data.attachment && response.data.attachment != "null" && response.data.attachment != '"null"') {
+            this.attachmentList = JSON.parse(response.data.attachment);
+          } else {
+            this.attachmentList = [];
+          }
+          this.receiveArr = response.data.receiveName ? [{
+            name: response.data.receiveName,
+            id: response.data.receive
+          }] : [];
+          this.copyArr = response.data.copyName ? [{name: response.data.copyName, id: response.data.copy}] : [];
+          if (response.data.type == 1) {
+            this.activeName = 'first';
+            this.beginDate1 = response.data.beginDate;
+          } else if (response.data.type == 2) {
+            this.activeName = 'second';
+            this.beginDate2 = response.data.beginDate;
+          } else if (response.data.type == 3) {
+            this.activeName = 'third';
+            this.beginDate3 = response.data.beginDate;
+          }
+        });
+      },
+      handleUpdate() {
+        if (this.attachmentList && this.attachmentList.length > 0) {
+          this.dataForm.attachment = this.attachmentList;
+        } else {
+          this.dataForm.attachment = undefined;
+        }
+
+        putObj(this.dataForm.id, this.dataForm).then(response => {
+          this.isLoading = false;
+          if (response.code == '2000') {
+            this.$notify({
+              title: '成功',
+              message: '操作成功',
+              type: 'success',
+              duration: 2000
+            });
+            this.getList(this.dataForm.id);
+            this.disableTabs = false;
+          } else {
+            this.$notify({
+              title: '失败',
+              message: response.msg,
+              type: 'warning',
+              duration: 2000
+            })
+          }
+        })
+      },
+      handleDel(id) {
+        this.$confirm('此操作将永久删除, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          delObj(id).then(response => {
+            if (response.code == '2000') {
+              this.$notify({
+                title: '成功',
+                message: '操作成功',
+                type: 'success',
+                duration: 2000
+              });
+              if (this.list.length == 1) {
+                this.detailData = undefined;
+              }
+              this.getList();
+            }
+          });
+
+        });
+
+      },
+
+      /*获取详情*/
+      handleDetailsShow(id, isReply) {
+        this.resetDataForm();
+        getObj(id).then(response => {
+          this.detailData = response.data;
+          this.detailsOrCreateVisible = true;
+          this.disableTabs = false;
+
+          if (response.data.attachment && response.data.attachment != "null" && response.data.attachment != '"null"') {
+            this.detailData.attachment = JSON.parse(response.data.attachment);
+          } else {
+            this.detailData.attachment = undefined;
+          }
+
+          var comments = response.data.comments;
+          if (comments && comments.length > 0) {
+            for (var x in comments) {
+              if (comments[x].attachment && comments[x].attachment != "null" && comments[x].attachment != '"null"') {
+                comments[x].attachment = JSON.parse(comments[x].attachment);
+              } else {
+                comments[x].attachment = undefined;
+              }
+            }
+          }
+          this.detailData.comments = comments;
+
+          //点击 回复 的则不用隐藏回复框
+          if (isReply) {
+            this.resetComment();
+            this.replyVisible = true;
+          } else {
+            this.replyVisible = false;
+          }
+
+          //改变阅读状态
+          if (this.detailData.status == 1) {
+            this.changeReadStatus(this.detailData.id);
+          }
+
+        });
+      },
+      /*改变阅读状态已读状态*/
+      changeReadStatus(id) {
+        readStatus(id, this.$store.state.user.id).then(response => {
+          this.detailData.status = 2;
+        });
+      },
+
+      /*附件*/
+      handleFileSuccess(response) {
+        this.attachmentList.push(response.data);
+      },
+      handleFileRemove(file, fileList) {
+        this.attachmentList = fileList;
+      },
+      handleAttachmentDownLoad(url) {
+        const ele = document.createElement('a');
+        ele.setAttribute('href', downloadPath(url)); //设置下载文件的url地址
+        ele.click();
+      },
+
+      /*个人动态*/
+      handlePersonalShow() {
+        // this.personalDialogVisible = true;
+      },
+      handlePersonalCancel() {
+        this.personalDialogVisible = false;
+      },
+
+      /*选择人员*/
+      handleUserShow(type) {
+        this.userType = type;
+        this.userVisible = true;
+      },
+      handleUserCancel() {
+        this.userVisible = false;
+        this.$refs.userDialog.reset();
+      },
+      handleUserSubmit() {
+        this.$refs.userDialog.onSubmit();
+      },
+      closeUserDialog(list) {
+        this.userVisible = false;
+        if (this.userType == 'receive') {
+          this.receiveArr = list;
+          if (list.length > 0) {
+            this.dataForm.receive = list[0].id;
+            this.dataForm.receiveName = list[0].name;
+            this.$refs.userDialog.reset();
+          }
+        } else if (this.userType == 'copy') {
+          this.copyArr = list;
+          if (list.length > 0) {
+            this.dataForm.copy = list[0].id;
+            this.dataForm.copyName = list[0].name;
+            this.$refs.userDialog.reset();
+          }
+        }
+      },
+      handleUserDel(index, type) {
+        if (type == 'receive') {
+          this.receiveArr.splice(index, 1);
+          this.dataForm.receive = undefined;
+          this.dataForm.receiveName = undefined;
+        } else if (type = 'copy') {
+          this.copyArr.splice(index, 1);
+          this.dataForm.copy = undefined;
+          this.dataForm.copyName = undefined;
+        }
+      },
+
+      /*回复框*/
+      resetComment() {
+        this.comment = {
+          sourceId: undefined,
+          parentId: undefined,
+          fromUser: this.$store.state.user.id,
+          fromUserName: this.$store.state.user.name,
+          toUser: undefined,
+          toUserName: undefined,
+          content: undefined,
+          attachment: undefined
+        };
+        this.commentToUser = '';
+        this.attachmentList = [];
+      },
+      handleReplyShow(sourceId, parentId, toUser, toUserName) {
+        if (!this.detailData.id || sourceId != this.detailData.id) {
+          this.handleDetailsShow(sourceId, true);
+        }
+        this.detailsOrCreateVisible = true;
+        this.replyVisible = true;
+        this.comment.sourceId = sourceId;
+        this.comment.parentId = parentId;
+        this.comment.toUser = toUser;
+        this.comment.toUserName = toUserName;
+        this.commentToUser = toUserName;
+      },
+      handleReplySubmit() {
+        if (this.attachmentList && this.attachmentList.length > 0) {
+          this.comment.attachment = this.attachmentList;
+        }
+
+        addComment(this.comment).then(response => {
+          this.isLoading = false;
+          if (response.code == '2000') {
+            this.$notify({
+              title: '成功',
+              message: '操作成功',
+              type: 'success',
+              duration: 2000
+            });
+            this.replyVisible = false;
+            this.resetComment();
+            this.handleDetailsShow(this.detailData.id);
+          }
+        });
+      },
+      handleReplyCancel() {
+        this.replyVisible = false;
+        this.resetComment();
+      },
+
+      /*评分*/
+      dailyRecordSubmitSuccess(id) {
+        this.handleDetailsShow(id);
+        this.dailyId = undefined;
+        this.dailyRecordDialogVisible = false;
+      },
+      openDailyRecordDialog(id) {
+        this.dailyId = id;
+        this.dailyRecordDialogVisible = true;
+      },
+      closeDailyRecordDialog() {
+        this.dailyId = undefined;
+        this.dailyRecordDialogVisible = false;
+      },
+    }
+  }
+</script>
+
+<style scoped lang="scss">
+  .daily-div {
+    padding: 15px;
+    min-width: 1280px;
+
+    .header-img {
+      width: 48px;
+      height: 48px;
+      float: left;
+      border-radius: 3px;
+      overflow: hidden;
+      background-color: #409EFF;
+    }
+
+    .hoverClass:hover {
+      cursor: pointer;
+      color: #4A9DE9;
+    }
+
+    .el-aside {
+      height: 81vh;
+      padding: 10px;
+      border-top: #cccccc solid 1px;
+      border-right: #cccccc solid 1px;
+
+      .daily-item {
+        padding-top: 15px;
+        padding-right: 10px;
+
+        .el-card {
+          .header-title {
+            float: left;
+            padding-left: 20px;
+            padding-top: 15px;
+            font-size: 16px;
+
+            span {
+              margin-right: 5px;
+            }
+          }
+
+          .el-card__body .hoverClass {
+            display: block;
+            max-height: 34px;
+            font-size: 14px;
+            overflow: hidden;
+          }
+
+          .card-bottom {
+            color: #999;
+            margin-top: 10px;
+            font-size: 12px;
+
+            span {
+              height: 24px;
+              line-height: 24px;
+              margin-top: 10px;
+            }
+
+            .card-function {
+              float: right;
+              font-size: 14px;
+
+              .el-button {
+                color: #999;
+                .iconfont {
+                  margin-right: 5px;
+                  position: relative;
+                  top: 2px;
+                }
+              }
+              .el-button:hover {
+                color: #4A9DE9;
+              }
+
+            }
+          }
+        }
+      }
+    }
+
+    .el-main {
+      border-top: #cccccc solid 1px;
+      height: 81vh;
+      float: left;
+      padding: 0px;
+      position: relative;
+
+      .type-title {
+        width: 100%;
+        padding: 20px 30px 0px 30px;
+
+        span {
+          display: block;
+          font-size: 16px;
+
+          .iconfont {
+            color: #409EFF;
+            margin-right: 5px;
+            font-weight: bold;
+            font-size: 18px;
+          }
+        }
+      }
+
+      .create-daily {
+        //padding-left: 10px;
+
+        .right-top {
+          padding-left: 10px;
+
+          .el-tabs {
+            margin-top: 20px;
+
+            .daily-table {
+              width: 100%;
+              border: none;
+              border-spacing: 0;
+              border-collapse: collapse;
+              color: #c8c9cc;
+
+              td {
+                border: 1px solid #e0e0e0;
+                line-height: 35px;
+
+                .el-form-item {
+                  margin-bottom: 0px;
+                }
+                .svg-icon {
+                  cursor: pointer;
+                }
+              }
+
+            }
+          }
+        }
+      }
+    }
+
+    .daily-details {
+      overflow: hidden;
+      .right-main {
+        overflow: auto;
+        .right-content {
+          width: 100%;
+          padding: 20px 0px 0px 30px;
+
+          .header-item {
+            height: 60px;
+
+            .header-title {
+              float: left;
+              padding-left: 20px;
+              padding-top: 15px;
+              font-size: 16px;
+
+              span {
+                margin-right: 5px;
+              }
+            }
+          }
+
+          .header-cont {
+            width: 100%;
+            font-size: 14px;
+            padding: 20px 0;
+            border-bottom: #cccccc solid 1px;
+          }
+
+        }
+
+        .main-bottom {
+          margin-right: 15px;
+          margin-bottom: 15px;
+          font-size: 14px;
+
+          ul {
+            list-style: none;
+
+            li {
+              line-height: 30px;
+              padding: 4px 0;
+              .icon-pingfenxingxing {
+                color: #e0e0e0;
+              }
+              .icon-pingfenxingxing-active {
+                color: orangered;
+              }
+              .icon-bankexing {
+                font-size: 18px;
+                margin: 0px -4px;
+              }
+            }
+          }
+
+          .notice-img {
+            width: 28px;
+            height: 28px;
+            float: left;
+            border-radius: 3px;
+            overflow: hidden;
+            background-color: #409EFF;
+          }
+
+          .text-right {
+            float: right;
+          }
+
+          .read-status {
+            line-height: 25px;
+            height: 25px;
+            padding-left: 40px;
+            font-size: 12px;
+
+            .svg-icon {
+              width: 25px;
+              height: 25px;
+              float: left;
+              margin-right: 5px;
+            }
+
+          }
+
+          .reply-div {
+            padding: 15px 0px 0px 40px;
+
+            .header-item {
+              height: 40px;
+
+              .header-title {
+                float: left;
+                padding-left: 20px;
+                padding-top: 10px;
+                font-size: 12px;
+                width: 95%;
+
+                span {
+                  margin-right: 5px;
+                  float: left;
+                }
+
+                .reply-time {
+                  float: right;
+                  color: #888;
+                  height: 28px;
+                  line-height: 28px;
+                  .el-button {
+                    display: none;
+                    color: #888;
+                  }
+                }
+              }
+              .header-title:hover .reply-time > span {
+                display: none;
+              }
+              .header-title:hover .reply-time .el-button {
+                display: inline-block;
+              }
+
+            }
+
+            .header-cont {
+              width: 100%;
+              font-size: 12px;
+              padding-left: 45px;
+              color: #888;
+              margin-bottom: 10px;
+            }
+
+            .reply-annex-item {
+              cursor: pointer;
+              color: #c8c9cc;
+              padding-left: 45px;
+              height: 29px;
+              line-height: 29px;
+              .reply-annex-cz {
+                display: none;
+                float: right;
+              }
+            }
+
+            .reply-annex-item:hover .reply-annex-cz {
+              display: inline-block;
+            }
+
+          }
+
+          .annex-div {
+            padding: 20px 0px 0px 40px;
+            font-size: 14px;
+
+            .el-col {
+              height: 28px;
+              line-height: 28px;
+            }
+
+            .annex-item {
+              cursor: pointer;
+
+              .annex-bottom {
+                display: none;
+                float: right;
+              }
+            }
+
+            .annex-item:hover .annex-bottom {
+              display: inline-block;
+            }
+          }
+
+          .record-div {
+            padding: 15px 0px 0px 40px;
+            font-size: 14px;
+            color: #c8c9cc;
+          }
+        }
+      }
+    }
+
+    .right-footer {
+      width: 100%;
+      position: absolute;
+      bottom: 0px;
+      font-size: 14px;
+      z-index: 1900;
+      padding: 15px 20px 0px 20px;
+      border-top: #cccccc solid 1px;
+      background-color: #fff;
+
+      .el-button {
+        .iconfont {
+          margin-right: 5px;
+          position: relative;
+          top: 2px;
+        }
+      }
+
+      .one {
+        float: left;
+        .attachment-upload {
+          display: inline-block;
+        }
+      }
+
+      .two {
+        float: right;
+      }
+    }
+  }
+</style>
+<style lang="scss">
+  .daily-div {
+    .el-card {
+      .el-card__header {
+        padding: 15px;
+        height: 80px;
+      }
+
+      .el-card__body {
+        padding: 0px !important;
+      }
+    }
+
+    .create-daily {
+      .span-item .el-form-item__content {
+        margin-left: 0px !important;
+
+        .el-textarea__inner {
+          border: none;
+        }
+
+        .el-input__inner {
+          border: none;
+        }
+      }
+      .el-form-item__error {
+        position: absolute;
+        display: inline-block;
+        top: 0px;
+        right: 15px;
+        text-align: right;
+      }
+
+      .el-input input.el-input__inner {
+        border: none;
+        text-align: left;
+      }
+
+      .attachment-upload {
+        .el-upload {
+          vertical-align: top;
+        }
+        .el-upload-list {
+          display: inline-block;
+          margin-left: 15px;
+        }
+      }
+    }
+
+    .personalDynamicsDialog {
+      .el-dialog {
+        margin-top: 0vh !important;
+        margin-bottom: 0vh !important;
+        height: 100vh !important;
+        min-width: 1000px;
+      }
+    }
+  }
+</style>
+

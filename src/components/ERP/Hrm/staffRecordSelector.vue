@@ -1,0 +1,135 @@
+<template>
+  <div>
+    <el-row>
+      <el-col :span="18">
+        <div class="filter-container">
+          <el-input @keyup.enter.native="handleFilter" style="width: 200px;" class="filter-item" placeholder="工号"
+                    v-model="listQuery.staffCode">
+          </el-input>
+          <el-input @keyup.enter.native="handleFilter" style="width: 200px;" class="filter-item" placeholder="姓名"
+                    v-model="listQuery.name">
+          </el-input>
+          <el-button class="filter-item" type="primary" icon="search" @click="handleFilter" style="margin-left: 10px;">
+            搜索
+          </el-button>
+        </div>
+        <el-table :key='tableKey' :data="list" v-loading.body="listLoading" border fit highlight-current-row
+                  @current-change="getRowData" @row-dblclick="onSubmit" ref="singleTable" style="width: 100%">
+          <el-table-column align="center" label="员工工号" prop="staffCode"></el-table-column>
+          <el-table-column align="center" label="员工姓名" prop="name"></el-table-column>
+          <el-table-column align="center" label="部门" prop="departmentName"></el-table-column>
+          <el-table-column align="center" label="上级" prop="leader"></el-table-column>
+          <el-table-column align="center" label="职务" width="120" prop="postName"></el-table-column>
+
+
+        </el-table>
+        <div v-show="!listLoading" class="pagination-container">
+          <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+                         :current-page.sync="listQuery.page"
+                         :page-sizes="[10,20,30, 50]" :page-size="listQuery.limit"
+                         layout="total, sizes, prev, pager, next, jumper" :total="total">
+          </el-pagination>
+        </div>
+
+      </el-col>
+      <el-col :span="6">
+        <el-row>
+          <el-col :span="24" style="line-height: 36px;padding-left: 20px;">
+            已选人员：
+            <br/>
+            <el-tag v-show="chooseAdmin.length>0" :key="tag" v-for="(tag,index) in chooseAdmin" closable
+                    :disable-transitions="true"
+                    @close="handleTagClose(index)" style="margin-right: 15px;">
+              {{tag}}
+            </el-tag>
+          </el-col>
+        </el-row>
+      </el-col>
+    </el-row>
+  </div>
+
+</template>
+
+<script>
+  import {
+    page
+  } from '@/api/erp/hrm/staffRecord';
+  import {mapGetters} from 'vuex';
+
+  export default {
+    //isSingle是否为单选 true单选、false多选
+    props: ['isSingle'],
+    methods: {
+      getList() {
+        this.listLoading = true;
+        page(this.listQuery)
+          .then(response => {
+            this.list = response.records;
+            this.total = response.total;
+            this.listLoading = false;
+          })
+      },
+      handleFilter() {
+        this.getList();
+      },
+      handleSizeChange(val) {
+        this.listQuery.limit = val;
+        this.getList();
+      },
+      handleCurrentChange(val) {
+        this.listQuery.page = val;
+        this.getList();
+      },
+      getRowData(val) {
+        //console.log(val);
+        if (this.isSingle) {
+          this.chooseAdmin = [val.name];
+          this.currentUser = [val];
+        } else {
+          for (var i in this.chooseAdmin) {
+            if (this.chooseAdmin[i] == val.name) {
+              return;
+            }
+          }
+          this.chooseAdmin.push(val.name);
+          this.currentUser.push(val);
+        }
+      },
+      onSubmit() {
+        this.$emit('closeUserDialog', this.currentUser)
+      },
+      reset() {
+        this.chooseAdmin = [];
+        this.currentUser = [];
+        //this.$refs.singleTable.setCurrentRow();
+      },
+      handleTagClose(index) {
+        //console.log(index);
+        this.chooseAdmin.splice(index, 1);
+        this.currentUser.splice(index, 1);
+      }
+    },
+    created() {
+      this.getList();
+    },
+    computed: {
+      ...mapGetters(['elements'])
+    },
+    data() {
+      return {
+        list: null,
+        total: null,
+        listLoading: true,
+        listQuery: {
+          page: 1,
+          limit: 10,
+          staffCode: undefined,
+          name: undefined,
+        },
+        tableKey: 0,
+        chooseAdmin: [],
+        currentUser: []
+      };
+    }
+  };
+</script>

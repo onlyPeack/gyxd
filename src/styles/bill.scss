@@ -1,0 +1,306 @@
+.bill-container {
+  margin: 10px 20px;
+
+  .el-switch {
+    float: right;
+  }
+
+  .filter-container {
+    padding-bottom: 0px;
+
+    .query-visible {
+      color: #409EFF;
+      margin-left: 10px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .query-container {
+      font-size: 14px;
+      color: #444;
+
+      .block {
+        margin-bottom: 10px;
+
+        .demonstration {
+          padding-right: 10px;
+        }
+
+        .el-date-editor {
+          width: 400px;
+          margin-right: 15px;
+        }
+      }
+    }
+  }
+
+  .el-dialog {
+    margin-top: 0vh !important;
+    margin-bottom: 0vh !important;
+    height: 100vh;
+  }
+
+  .el-dialog__body {
+    padding: 10px 20px 20px 20px !important;
+    height: 86vh;
+    overflow: auto;
+  }
+
+  .el-dialog__footer {
+    position: absolute;
+    background-color: #fff;
+    z-index: 999;
+    width: 100%;
+    bottom: 0px;
+    border-top: 1px solid #dcdfe6;
+  }
+
+  .pagination-container {
+    margin-top: 10px;
+  }
+
+  .result-data-table .el-table__body-wrapper .cell {
+    height: 23px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .colum-billno {
+    color: #0078D7;
+    cursor: pointer;
+  }
+
+  /*新增、编辑*/
+  .billFormDialog {
+    font-size: 12px;
+
+    .con-title {
+      font-size: 16px;
+      svg {
+        color: #54C07C;
+        font-size: 20px;
+        margin-right: 8px;
+      }
+      .cont-title-billNo {
+        font-weight: bold;
+        float: right;
+        margin-right: 30px;
+      }
+    }
+    .el-dialog {
+      margin-top: 0vh !important;
+      margin-bottom: 0vh !important;
+      height: 100vh;
+    }
+
+    .topTable {
+      width: 100%;
+      margin-bottom: 20px;
+      border: none;
+      border-spacing: 0;
+      border-collapse: collapse;
+      color: #444;
+
+      td {
+        width: 50%;
+        border: 1px solid #e0e0e0;
+        height: 40px;
+        padding: 0px;
+        margin: 0px;
+        padding-left: 10px;
+      }
+      .el-form-flex {
+        display: flex;
+        margin-bottom: 0px;
+      }
+      .el-input {
+        margin-top: 6px;
+      }
+      .el-select {
+        width: 100%;
+      }
+      .el-input input.el-input__inner {
+        border: none;
+        text-align: left;
+      }
+      .el-textarea__inner {
+        border: none;
+        resize: none;
+        padding: 10px 15px;
+      }
+      .el-form-item__content {
+        width: 100%;
+
+        .el-form-item__error {
+          position: absolute;
+          display: inline-block;
+          top: 0px;
+          right: 15px;
+          text-align: right;
+        }
+      }
+      .el-form-item--medium .el-form-item__label, .el-form-item--mini .el-form-item__label {
+        line-height: 40px;
+        color: #444;
+        white-space: nowrap;
+      }
+      .el-tag {
+        margin-right: 5px;
+      }
+    }
+
+    .association-creation {
+      height: 30px;
+      line-height: 30px;
+      text-align: right;
+    }
+    .order-making {
+      height: 40px;
+      line-height: 40px;
+      margin-bottom: 20px;
+    }
+
+    .tb-edit {
+      height: 100%;
+      flex: 1 0 auto;
+
+      .el-input + span {
+        display: none
+      }
+      .el-select + span {
+        display: none
+      }
+      .el-table__footer-wrapper tbody td, .el-table__header-wrapper tbody td {
+        background-color: #fff;
+      }
+      td, th {
+        padding: 0px;
+        margin: 0px;
+        height: 40px;
+      }
+      th {
+        font-weight: 400;
+        color: #000;
+        background-color: #F7F7F7;
+      }
+      td {
+        .cell {
+          width: 100%;
+          height: 40px;
+          line-height: 40px;
+          padding: 0px;
+          text-align: center;
+          background-color: #fff;
+        }
+        .el-input, .el-select {
+          width: 100%;
+          height: 40px;
+        }
+        .el-input--mini .el-input__inner {
+          width: 100%;
+          height: 40px;
+          border: none;
+        }
+        .el-select--small .el-input__inner {
+          width: 100%;
+          height: 40px;
+          border: none;
+        }
+        .readonly-el-input {
+          background-color: rgba(247, 247, 247, 0.5);
+          .el-input__inner {
+            background-color: rgba(247, 247, 247, 0.5);
+          }
+        }
+        .right-el-input {
+          .el-input__inner {
+            text-align: right;
+          }
+        }
+        .center-el-input {
+          .el-input__inner {
+            text-align: center;
+          }
+        }
+      }
+    }
+  }
+
+  /*详情*/
+  .billDetailDialog {
+    .el-dialog__body {
+      height: 85vh;
+    }
+    .topTable {
+      .el-form-item__content {
+        line-height: 40px;
+      }
+      .el-input {
+        margin-top: 0px !important;
+      }
+    }
+    .tb-detail {
+      flex: 1 0 auto;
+      .el-table__footer-wrapper tbody td, .el-table__header-wrapper tbody td {
+        background-color: #fff;
+      }
+      td, th {
+        padding: 0px;
+        margin: 0px;
+        height: 40px;
+      }
+      th {
+        font-weight: 400;
+        color: #000;
+        background-color: #F7F7F7;
+      }
+    }
+  }
+
+  /*关联单据*/
+  .billSelectorDialog {
+    .el-dialog__body {
+      height: auto;
+    }
+    .el-dialog__footer {
+      border-top: none;
+    }
+  }
+
+  .el-table {
+    // min-height: 500px!important;
+    .col-required {
+      .cell {
+        color: #F56C6C;
+      }
+    }
+  }
+}
+
+.goodsDialog > .el-dialog {
+  margin-top: 0vh !important;
+  margin-bottom: 0vh !important;
+  height: 100vh;
+}
+
+.goodsDialog > .el-dialog > .el-dialog__header {
+  position: absolute;
+  height: 50px;
+  width: 100%;
+}
+
+.goodsDialog > .el-dialog > .el-dialog__body {
+  height: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+  padding: 50px 20px 60px 20px;
+  display: flex;
+}
+
+.goodsDialog > .el-dialog > .el-dialog__footer {
+  position: absolute;
+  width: 100%;
+  height: 60px;
+  bottom: 0px;
+  background-color: #fff;
+}

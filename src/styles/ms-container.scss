@@ -1,0 +1,58 @@
+.ms-container {
+  .ms-dialog {
+    font-size: 12px;
+    .topTable {
+      width: 100%;
+      margin-bottom: 20px;
+      border: none;
+      border-spacing: 0;
+      border-collapse: collapse;
+      color: #444;
+
+      td {
+        border: 1px solid #e0e0e0;
+        height: 40px;
+        padding: 0px;
+        margin: 0px;
+        padding-left: 10px;
+      }
+      .el-form-flex {
+        display: flex;
+        margin-bottom: 0px;
+      }
+      .el-input, .el-input-number {
+        margin-top: 6px;
+      }
+      .el-input input.el-input__inner {
+        border: none;
+        text-align: left;
+      }
+      .el-textarea__inner {
+        border: none;
+        resize: none;
+        padding: 10px 15px;
+      }
+      .el-form-item {
+        margin-bottom: 0px;
+      }
+      .el-form-item__content {
+        width: 100%;
+        .el-select{
+          width: 100%;
+        }
+        .el-form-item__error {
+          position: absolute;
+          display: inline-block;
+          top: 0px;
+          right: 15px;
+          text-align: right;
+        }
+      }
+      .el-form-item--medium .el-form-item__label, .el-form-item--mini .el-form-item__label {
+        line-height: 40px;
+        color: #444;
+        white-space: nowrap;
+      }
+    }
+  }
+}
