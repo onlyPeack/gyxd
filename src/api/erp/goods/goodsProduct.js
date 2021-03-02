@@ -5,7 +5,7 @@ export function page(query) {
     query = Vue.prototype.filterObjSpace(query);
   }
   return request({
-    url: '/api/goods/goods-product/page',
+    url: '/api/mini/goods-product/page',
     method: 'get',
     params: query
   })

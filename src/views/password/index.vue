@@ -287,7 +287,7 @@
 
 <style lang="scss" scoped="scoped">
   @import "../../styles/avue/style/common.scss";
-  @import "../../styles/avue/style/index.css";
+  /*@import "../../styles/avue/style/index.css";*/
   @import "../../styles/avue/style/animate.css";
 
   .register-container {

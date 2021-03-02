@@ -2005,36 +2005,34 @@ export const asyncRoutes = [
   // },
   // /**************************************** 商城模块end ****************************************/
 
-  // {
-  //   path: '/cms',
-  //   component: Layout,
-  //   name: '界面管理',
-  //   icon: 'setting',
-  //   authority: 'cms',
-  //   children: [
-  //     {
-  //       path: 'cmsStoreyGood',
-  //       name: '商城楼层',
-  //       component: resolve => require(['@/views/mall/cms/cmsStoreyGood'], resolve),
-  //       authority: 'cmsStoreyGood'
-  //     },
-  //     {
-  //       path: 'recommendGoods',
-  //       name: '商城商品管理',
-  //       component: resolve => require(['@/views/mall/cms/recommendGoods'], resolve),
-  //       authority: 'recommendGoods'
-  //     },
-  //     {
-  //       path: 'taskBillList',
-  //       name: '任务配置',
-  //       component: resolve => require(['@/views/setting/tab/bussiness/taskBillList'], resolve),
-  //       authority: 'taskBillList'
-  //     },
-  //   ]
-  // },
+  {
+    path: '/cms',
+    component: Layout,
+    name: '界面管理',
+    icon: 'setting',
+    authority: 'cms',
+    children: [
+      {
+        path: 'cmsStoreyGood',
+        name: '模板管理',
+        component: resolve => require(['@/views/mall/cms/cmsStoreyGood'], resolve),
+        authority: 'cmsStoreyGood'
+      },
+      {
+        path: 'recommendGoods',
+        name: '商城商品管理',
+        component: resolve => require(['@/views/mall/cms/recommendGoods'], resolve),
+        authority: 'recommendGoods'
+      },
+      {
+        path: 'taskBillList',
+        name: '任务配置',
+        component: resolve => require(['@/views/setting/tab/bussiness/taskBillList'], resolve),
+        authority: 'taskBillList'
+      },
+    ]
+  },
 
-  /**************************************** 业务配置模块start ****************************************/
-  /**************************************** 业务配置模块end ****************************************/
   // /**************************************** 统计分析模块start ****************************************/
   // {
   //   path: '/analysis',
@@ -2135,6 +2133,22 @@ export const asyncRoutes = [
     ]
   },
   /**************************************** 营销模块end ****************************************/
+  /**************************************** 店主管理模块Start ****************************************/
+  {
+    path: '/shopkeeper',
+    component: Layout,
+    name: '店主管理',
+    authority: 'shopkeeper',
+    children: [
+      {
+        path: 'checkPending',
+        name: '待审核店铺',
+        component: resolve => require(['@/views/erp/shopkeeper/checkPending'], resolve),
+        authority: 'checkPending'
+      },
+    ]
+  },
+  /**************************************** 店主管理模块end ****************************************/
 ];
 
 const createRouter = () => new Router({

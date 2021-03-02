@@ -40,7 +40,7 @@
                 </el-input>
                 <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">搜索</el-button>
                 <el-button class="filter-item" type="danger" icon="el-icon-delete" @click="resetQuery">重置</el-button>
-                <el-button class="filter-item" type="success" icon="el-icon-add" @click="handleCreate">添加商品</el-button>
+                <el-button class="filter-item" type="success" icon="el-icon-plus" @click="handleCreate">添加商品</el-button>
 
               </div>
 
@@ -53,7 +53,9 @@
                 <el-table-column align="center" label="型号" prop="specModel"></el-table-column>
                 <el-table-column align="center" label="零售价" prop="retailPrice"></el-table-column>
                 <el-table-column align="center" label="订货价" prop="goodsPrice"></el-table-column>
-                <el-table-column align="center" label="图片路径" prop="url" width="200"></el-table-column>
+                <el-table-column align="center" label="图片" prop="url" width="180" v-slot="{row}">
+                  <el-image :previewSrcList="[row.url]" :src="row.url" style="width: 80px"></el-image>
+                </el-table-column>
                 <el-table-column align="center" label="操作人" prop="crtUserName"></el-table-column>
                 <el-table-column align="center" label="创建时间" prop="crtTime"></el-table-column>
 
@@ -76,7 +78,7 @@
 
               <!-- 添加或修改对话框 -->
               <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-                <el-form :rules="rules" ref="dataForm" :model="dataForm" status-icon label-position="left"
+                <el-form :rules="rules" ref="dataForm" :model="dataForm" status-icon label-position="right"
                          label-width="100px"
                          style='width: 400px; margin-left:50px;'>
                   <el-form-item label="分类" prop="treeId" v-show="false">
@@ -85,18 +87,20 @@
                   <el-form-item label="分类" prop="treeIds" v-show="false">
                     <el-input v-model="dataForm.treeIds"></el-input>
                   </el-form-item>
-                  <el-form-item label="分类名称" prop="parentName">
+                  <el-form-item label="分类名称：" prop="parentName">
                     <el-input v-model="dataForm.parentName" :disabled="true"></el-input>
                   </el-form-item>
-                  <el-form-item label="商品名称" prop="goodsName">
+                  <el-form-item label="商品名称：" prop="goodsName">
                     <div @click.stop="handleProductShow" style="cursor: pointer;">
-                      <el-input v-model="dataForm.goodsName" :disabled="true"></el-input>
+                      <el-input v-model="dataForm.goodsName" :disabled="true">
+                        <i class="el-icon-search" style="color:rgb(42,140,254);font-size: 20px;float: right;cursor: pointer;line-height: 28px" slot="suffix"></i>
+                      </el-input>
                     </div>
                   </el-form-item>
-                  <el-form-item label="产品编号" prop="goodsCode">
+                  <el-form-item label="产品编号：" prop="goodsCode">
                     <el-input v-model="dataForm.goodsCode" :disabled="true"></el-input>
                   </el-form-item>
-                  <el-form-item label="图片路径" prop="url">
+                  <el-form-item label="图片路径：" prop="url">
                     <el-input v-model="dataForm.url" :disabled="true"></el-input>
                   </el-form-item>
 

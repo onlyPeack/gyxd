@@ -5,7 +5,7 @@ export function page(query) {
     query = Vue.prototype.filterObjSpace(query);
   }
   return request({
-    url: '/api/mall/cmsStoreyGood/page',
+    url: '/api/mini/cmsStoreyGood/page',
     method: 'get',
     params: query
   })
@@ -13,7 +13,7 @@ export function page(query) {
 
 export function addObj(obj) {
   return request({
-    url: '/api/mall/cmsStoreyGood',
+    url: '/api/mini/cmsStoreyGood',
     method: 'post',
     data: obj
   })
@@ -21,21 +21,21 @@ export function addObj(obj) {
 
 export function getObj(id) {
   return request({
-    url: '/api/mall/cmsStoreyGood/' + id,
+    url: '/api/mini/cmsStoreyGood/' + id,
     method: 'get'
   })
 }
 
 export function delObj(id) {
   return request({
-    url: '/api/mall/cmsStoreyGood/' + id,
+    url: '/api/mini/cmsStoreyGood/' + id,
     method: 'delete'
   })
 }
 
 export function putObj(id, obj) {
   return request({
-    url: '/api/mall/cmsStoreyGood/' + id,
+    url: '/api/mini/cmsStoreyGood/' + id,
     method: 'put',
     data: obj
   })

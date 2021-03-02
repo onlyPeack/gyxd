@@ -5,7 +5,7 @@ export function fetchTree(query) {
     query = Vue.prototype.filterObjSpace(query);
   }
   return request({
-    url: '/api/mall/cmsStoreyTree/tree',
+    url: '/api/mini/cmsStoreyTree/tree',
     method: 'get',
     params: query
   })
@@ -13,13 +13,13 @@ export function fetchTree(query) {
 
 export function fetchAll() {
   return request({
-    url: '/api/mall/cmsStoreyTree/all',
+    url: '/api/mini/cmsStoreyTree/all',
     method: 'get'
   })
 }
 export function addTreeObj(obj) {
   return request({
-    url: '/api/mall/cmsStoreyTree',
+    url: '/api/mini/cmsStoreyTree',
     method: 'post',
     data: obj
   })
@@ -27,21 +27,21 @@ export function addTreeObj(obj) {
 
 export function getTreeObj(id) {
   return request({
-    url: '/api/mall/cmsStoreyTree/' + id,
+    url: '/api/mini/cmsStoreyTree/' + id,
     method: 'get'
   })
 }
 
 export function delTreeObj(id) {
   return request({
-    url: '/api/mall/cmsStoreyTree/' + id,
+    url: '/api/mini/cmsStoreyTree/' + id,
     method: 'delete'
   })
 }
 
 export function putTreeObj(id, obj) {
   return request({
-    url: '/api/mall/cmsStoreyTree/' + id,
+    url: '/api/mini/cmsStoreyTree/' + id,
     method: 'put',
     data: obj
   })

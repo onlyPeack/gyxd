@@ -470,20 +470,6 @@ export const asyncRoutes = [
   },
 
   {
-    path: '/theme',
-    component: 'layout/Layout',
-    redirect: 'noRedirect',
-    children: [
-      {
-        path: 'index',
-        component: 'views/theme/index',
-        name: 'Theme',
-        meta: { title: 'Theme', icon: 'theme' }
-      }
-    ]
-  },
-
-  {
     path: '/clipboard',
     component: 'layout/Layout',
     redirect: 'noRedirect',

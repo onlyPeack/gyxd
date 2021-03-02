@@ -5,7 +5,7 @@ export function page(query) {
     query = Vue.prototype.filterObjSpace(query);
   }
   return request({
-    url: '/api/goods/brand/page',
+    url: '/api/mini/brand/page',
     method: 'get',
     params: query
   })
@@ -13,14 +13,14 @@ export function page(query) {
 
 export function allBrand() {
   return request({
-    url: '/api/goods/brand/allBrand',
+    url: '/api/mini/brand/allBrand',
     method: 'get',
   })
 }
 
 export function addObj(obj) {
   return request({
-    url: '/api/goods/brand',
+    url: '/api/mini/brand',
     method: 'post',
     data: obj
   })
@@ -28,14 +28,14 @@ export function addObj(obj) {
 
 export function getObj(id) {
   return request({
-    url: '/api/goods/brand/' + id,
+    url: '/api/mini/brand/' + id,
     method: 'get'
   })
 }
 
 export function delObj(id) {
   return request({
-    url: '/api/goods/brand/' + id,
+    url: '/api/mini/brand/' + id,
     method: 'delete'
   })
 }
@@ -47,7 +47,7 @@ export function getObjs(id) {
 }
 export function putObj(id, obj) {
   return request({
-    url: '/api/goods/brand/' + id,
+    url: '/api/mini/brand/' + id,
     method: 'put',
     data: obj
   })
@@ -55,7 +55,7 @@ export function putObj(id, obj) {
 
 export function pageBycategoryId(id) {
   return request({
-    url: '/api/goods/brand/selectByCategoryId' + id,
+    url: '/api/mini/brand/selectByCategoryId' + id,
     method: 'get'
   })
 }

@@ -61,7 +61,7 @@
       <el-table-column align="right" label="是否启用" prop="status">
         <template slot="header">
           <span>是否启用</span>
-          <el-tooltip class="item" effect="dark" content="有用户领取的优惠券下架后无法编辑和启用，启用状态下无法编辑和删除" placement="top-start">
+          <el-tooltip class="item" effect="dark" content="有用户领取的优惠券下架后无法编辑和启用，启用状态下无法编辑和删除" placement="top-start" style="display: inline-block">
             <div class="xianji"></div>
           </el-tooltip>
         </template>
