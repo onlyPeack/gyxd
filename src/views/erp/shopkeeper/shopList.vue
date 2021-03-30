@@ -21,9 +21,9 @@
       </div>
     </div>
     <div style="margin-top: 1px;">
-<!--      <el-button type="text" icon="el-icon-plus" @click="handleCreate">新建</el-button>-->
+      <!--      <el-button type="text" icon="el-icon-plus" @click="handleCreate">新建</el-button>-->
       <el-button type="text" icon="el-icon-edit" @click="handleUpdate" :disabled="btnStatus.audit">审核</el-button>
-<!--      <el-button type="text" icon="el-icon-delete" @click="handleRowDelete" :disabled="btnStatus.del">删除</el-button>-->
+      <!--      <el-button type="text" icon="el-icon-delete" @click="handleRowDelete" :disabled="btnStatus.del">删除</el-button>-->
     </div>
     <!-- 查询结果 -->
     <el-table size="small" :data="list" v-loading="listLoading" element-loading-text="正在查询中。。。" border fit ref="analysisTable"
@@ -77,7 +77,7 @@
   import shopDetail from './common/shopDetail'
 
   export default {
-    name: 'checkPending',
+    name: 'shopList',
     data() {
       return {
         clientHeight: 300,

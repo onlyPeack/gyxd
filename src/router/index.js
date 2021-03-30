@@ -856,12 +856,6 @@ export const asyncRoutes = [
         authority: 'sales-receivable'
       },
       {
-        path: 'sales-invoice',
-        component: resolve => require(['@/views/erp/financial/receivable/sales-invoice-list'], resolve),
-        name: '销售发票',
-        authority: 'sales-invoice'
-      },
-      {
         path: 'sales-refund',
         component: resolve => require(['@/views/erp/financial/receivable/sales-refund-list'], resolve),
         name: '销售退款',
@@ -1126,12 +1120,6 @@ export const asyncRoutes = [
     name: '资金平衡',
     authority: 'capital-balance',
     children: [
-      {
-        path: 'balance-client',
-        component: resolve => require(['@/views/erp/financial/balance/clientBalance'], resolve),
-        name: '客户资金平衡',
-        authority: 'balance-client'
-      },
       {
         path: 'balance-profit',
         component: resolve => require(['@/views/erp/financial/balance/profitBalance'], resolve),
@@ -1934,44 +1922,44 @@ export const asyncRoutes = [
   //     }
   //   ]
   // },
-  // {
-  //   path: '/oms',
-  //   component: Layout,
-  //   name: '订单',
-  //   icon: 'setting',
-  //   authority: 'oms',
-  //   children: [{
-  //     path: 'order',
-  //     component: resolve => require(['@/views/erp/mall/oms/order/index'], resolve),
-  //     name: '订单列表',
-  //     authority: 'order'
-  //   }, {
-  //     path: 'orderSetting',
-  //     component: resolve => require(['@/views/erp/mall/oms/order/setting'], resolve),
-  //     name: '订单设置',
-  //     authority: 'orderSetting'
-  //   }, {
-  //     path: 'manualOrder',
-  //     component: resolve => require(['@/views/erp/mall/oms/order/manualOrder'], resolve),
-  //     name: '手工下单',
-  //     authority: 'manualOrder'
-  //   }, {
-  //     path: 'orderDelay',
-  //     component: resolve => require(['@/views/erp/mall/oms/order/orderDelay'], resolve),
-  //     name: '订单延时',
-  //     authority: 'orderDelay'
-  //   }, {
-  //     path: 'returnApply',
-  //     component: resolve => require(['@/views/erp/mall/oms/apply/index'], resolve),
-  //     name: '退货申请',
-  //     authority: 'returnApply'
-  //   }, {
-  //     path: 'returnReason',
-  //     component: resolve => require(['@/views/erp/mall/oms/apply/reason'], resolve),
-  //     name: '退货原因',
-  //     authority: 'returnReason'
-  //   }]
-  // },
+  {
+    path: '/oms',
+    component: Layout,
+    name: '订单',
+    icon: 'setting',
+    authority: 'oms',
+    children: [{
+      path: 'order',
+      component: resolve => require(['@/views/erp/mall/oms/order/index'], resolve),
+      name: '订单列表',
+      authority: 'order'
+    }, {
+      path: 'orderSetting',
+      component: resolve => require(['@/views/erp/mall/oms/order/setting'], resolve),
+      name: '订单设置',
+      authority: 'orderSetting'
+    }, {
+      path: 'manualOrder',
+      component: resolve => require(['@/views/erp/mall/oms/order/manualOrder'], resolve),
+      name: '手工下单',
+      authority: 'manualOrder'
+    }, {
+      path: 'orderDelay',
+      component: resolve => require(['@/views/erp/mall/oms/order/orderDelay'], resolve),
+      name: '订单延时',
+      authority: 'orderDelay'
+    }, {
+      path: 'returnApply',
+      component: resolve => require(['@/views/erp/mall/oms/apply/index'], resolve),
+      name: '退货申请',
+      authority: 'returnApply'
+    }, {
+      path: 'returnReason',
+      component: resolve => require(['@/views/erp/mall/oms/apply/reason'], resolve),
+      name: '退货原因',
+      authority: 'returnReason'
+    }]
+  },
   // {
   //   path: '/stock_center',
   //   component: Layout,
@@ -2130,6 +2118,12 @@ export const asyncRoutes = [
         component: resolve => require(['@/views/erp/marketing/coupon'], resolve),
         authority: 'coupon'
       },
+      {
+        path: 'advertise',
+        name: '广告管理',
+        component: resolve => require(['@/views/mall/sms/advertise/index'], resolve),
+        authority: 'advertise'
+      },
     ]
   },
   /**************************************** 营销模块end ****************************************/
@@ -2149,6 +2143,43 @@ export const asyncRoutes = [
     ]
   },
   /**************************************** 店主管理模块end ****************************************/
+  /**************************************** 运营中心模块Start ****************************************/
+  {
+    path: '/operation',
+    component: Layout,
+    name: '运营中心',
+    authority: 'operation',
+    children: [
+      {
+        path: 'feedback',
+        name: '意见反馈',
+        component: resolve => require(['@/views/erp/operation/feedback'], resolve),
+        authority: 'feedback'
+      },
+    ]
+  },
+
+  /**************************************** 店主管理模块end ****************************************/
+  /**************************************** 会员管理模块Start ****************************************/
+  {
+    path: '/member',
+    component: Layout,
+    name: '会员管理',
+    authority: 'member',
+    children: [
+      {
+        path: 'memberList',
+        name: '会员列表',
+        component: resolve => require(['@/views/erp/member/memberList'], resolve),
+        authority: 'memberList'
+      },
+    ]
+  },
+
+
+  /**************************************** 会员管理模块end ****************************************/
+
+
 ];
 
 const createRouter = () => new Router({

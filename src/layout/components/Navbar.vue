@@ -17,13 +17,13 @@
       <div class="right-menu-operation">
         <el-button round icon="el-icon-search" @click="openNavigationDialog()"></el-button>
       </div>
-      <div class="right-menu-operation">
-        <el-button round>
-          <a :href="emailUrl" target="_blank">
-            <svg-icon icon-class="email"></svg-icon>
-          </a>
-        </el-button>
-      </div>
+<!--      <div class="right-menu-operation">-->
+<!--        <el-button round>-->
+<!--          <a :href="emailUrl" target="_blank">-->
+<!--            <svg-icon icon-class="email"></svg-icon>-->
+<!--          </a>-->
+<!--        </el-button>-->
+<!--      </div>-->
       <el-dropdown trigger="click" v-if="loginno==='00000'" class="right-menu-operation">
         <span>
           <el-button round><svg-icon icon-class="shezhi"></svg-icon></el-button>
@@ -236,6 +236,7 @@
     },
     methods: {
       toggleSideBar() {
+        //console.log('enter!!!')
         this.$store.dispatch('app/toggleSideBar')
       },
       logout() {

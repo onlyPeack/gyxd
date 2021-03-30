@@ -1,13 +1,13 @@
 'use strict'
 const path = require('path')
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
+// const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 const SimpleProgressWebpackPlugin = require( 'simple-progress-webpack-plugin' )
 // 导入compression-webpack-plugin
 const CompressionWebpackPlugin = require('compression-webpack-plugin')
 // 定义压缩文件类型
 const productionGzipExtensions = ['js', 'css']
 const defaultSettings = require('./src/settings.js')
-const webpack = require('webpack')
+// const webpack = require('webpack')
 
 function resolve(dir) {
   return path.join(__dirname, dir)
@@ -56,11 +56,11 @@ module.exports = {
       '/api/mini': {
         // target: 'http://47.92.91.63:8765', //正式
         // target: 'http://192.168.1.219:8765',//测试
-        // target: 'http://192.168.1.57:8765',//开发
-        target: 'http://192.168.1.55:10030',//史
+        target: 'http://192.168.1.57:8765',//开发
+        // target: 'http://192.168.1.55:10030',//史
         // logLevel:'debug',
         pathRewrite: {
-          '^/api/mini': ''
+          '^/api/mini': '/api/mini'
         }
       },
       '/api': {

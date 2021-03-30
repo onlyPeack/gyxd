@@ -2,7 +2,7 @@
   <div class="login-container pull-height"
        @keyup.enter.native="handleLogin">
     <div class="login-info text-white animated fadeInLeft">
-      <h2 class="login-info-title">云ERP</h2>
+      <h2 class="login-info-title">工业小店</h2>
       <!--<ul class="login-info-list">-->
       <!--<li class="login-info-item">前沿技术支持-->
       <!--</li>-->
@@ -14,7 +14,7 @@
     </div>
     <div class="login-border animated fadeInRight">
       <div class="login-main">
-        <h2 class="login-title"> 登录云ERP </h2>
+        <h2 class="login-title"> 登录工业小店 </h2>
         <el-tabs v-model="activeName">
           <el-tab-pane label="用户密码" name="user">
             <userLogin></userLogin>

@@ -26,7 +26,7 @@ function hasPermission(menus, route) {
 function filterAsyncRouter(asyncRouterMap, menus, menuDatas) {
   const accessedRouters = asyncRouterMap.filter(route => {
     if (hasPermission(menus, route)) {
-      //console.log(menuDatas[route.authority],route,'错误检测')
+      console.log(menuDatas[route.authority],route,'错误检测')
       route.name = menuDatas[route.authority].title
       route.icon = menuDatas[route.authority].icon
       if (route.children && route.children.length) {

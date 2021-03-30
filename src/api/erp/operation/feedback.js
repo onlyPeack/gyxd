@@ -5,22 +5,23 @@ export function selectPage(query) {
     query = Vue.prototype.filterObjSpace(query);
   }
   return request({
-    url: '/api/mini/member_shop/selectByItem',
+    url: '/api/mini/ums-member-feedback/page',
     method: 'get',
     params: query
   })
 }
 
-export function selectDetailById(id) {
+export function updObj(query) {
   return request({
-    url: '/api/mini/member_shop/selectDetailById?id='+id,
-    method: 'get',
+    url: '/api/mini/ums-member-feedback/'+query.id,
+    method: 'put',
+    data: query
   })
 }
 
-export function auditStatus(id,status) {
+export function deleteBatch(ids) {
   return request({
-    url: '/api/mini/member_shop/auditStatus?id='+id+'&status='+status,
+    url: '/api/mini/ums-member-feedback/deleteBatch/'+ids,
     method: 'get',
   })
 }

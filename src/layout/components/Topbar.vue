@@ -20,11 +20,11 @@
            <svg-icon icon-class="sousuo"></svg-icon>
         </span>
       </div>
-      <div class="right-menu-operation">
-        <a :href="emailUrl" target="_blank">
-          <svg-icon icon-class="email" style="color: white"></svg-icon>
-        </a>
-      </div>
+<!--      <div class="right-menu-operation">-->
+<!--        <a :href="emailUrl" target="_blank">-->
+<!--          <svg-icon icon-class="email" style="color: white"></svg-icon>-->
+<!--        </a>-->
+<!--      </div>-->
       <el-dropdown trigger="click" v-if="loginno==='00000'" class="right-menu-operation">
         <span>
            <svg-icon icon-class="shezhi"></svg-icon>
@@ -51,9 +51,9 @@
         </el-dropdown-menu>
       </el-dropdown>
       <div style="float: right;">
-        <!--<el-tooltip effect="dark" content="换肤" placement="bottom">
-          <theme-picker class="theme-switch right-menu-item"></theme-picker>
-        </el-tooltip>-->
+<!--        <el-tooltip effect="dark" content="换肤" placement="bottom">-->
+<!--          <theme-picker class="theme-switch right-menu-item"></theme-picker>-->
+<!--        </el-tooltip>-->
 
         <el-dropdown class="avatar-container right-menu-item" trigger="click">
           <div class="avatar-wrapper">

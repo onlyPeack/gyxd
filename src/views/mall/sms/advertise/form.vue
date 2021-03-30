@@ -1,5 +1,5 @@
 <template> 
-  <el-dialog :visible.sync="dialogFormVisible" width="70%" @close="handleClose" :close-on-click-modal="false"
+  <el-dialog :visible.sync="dialogFormVisible" width="60%" @close="handleClose" :close-on-click-modal="false"
              :before-close="handleClose" >
       <span slot="title" class="con-title">
         <span v-if="!id">新增广告</span>

@@ -8,16 +8,16 @@
       <el-form-item label="广告名称：" prop="name">
         <el-input v-model="homeAdvertise.name" class="input-width"></el-input>
       </el-form-item>
-      <el-form-item label="广告位置：">
-        <el-select v-model="homeAdvertise.type" style="width: 220px;">
-          <el-option
-            v-for="type in typeOptions"
-            :key="type.value"
-            :label="type.label"
-            :value="type.value">
-          </el-option>
-        </el-select>
-      </el-form-item>
+<!--      <el-form-item label="广告位置：">-->
+<!--        <el-select v-model="homeAdvertise.type" style="width: 220px;">-->
+<!--          <el-option-->
+<!--            v-for="type in typeOptions"-->
+<!--            :key="type.value"-->
+<!--            :label="type.label"-->
+<!--            :value="type.value">-->
+<!--          </el-option>-->
+<!--        </el-select>-->
+<!--      </el-form-item>-->
       <el-form-item label="开始时间：" prop="startTime">
         <el-date-picker
           type="datetime"
@@ -38,7 +38,7 @@
           <el-radio :label="1">上线</el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-form-item label="广告图片">
+      <el-form-item label="广告图片：">
         <el-upload class="avatar-uploader" :action='uploadPath' list-type="picture-card" :show-file-list="false"
                                accept=".jpg,.jpeg,.png,.gif,.svg" :on-success="uploadPicUrl" :class="homeAdvertise.pic?'avatar-box':''">
         <img v-if="homeAdvertise.pic" :src="homeAdvertise.pic" class="avatar">
@@ -46,9 +46,7 @@
           <div class="el-upload__tip" slot="tip">
             <ul style="padding: 0;margin-left: 14px;">
               <li>只能上传jpg/png/svg/gif文件，且不超过1MB</li>
-              <li v-if="homeAdvertise.type*1===1">建议上传海报尺寸大小为698*260px</li>
-              <li v-else-if="homeAdvertise.type*1===2">建议上传海报尺寸大小为732*440px</li>
-              <li v-else>建议上传海报尺寸大小为732*450px</li>
+              <li>建议上传海报尺寸大小为698*260px</li>
             </ul>
           </div>
       </el-upload>
@@ -86,17 +84,21 @@
   import {uploadPath} from '@/api/erp/goods/storage'
 
   const defaultTypeOptions = [
+    // {
+    //   label: 'PC首页轮播',
+    //   value: 0
+    // },
+    // {
+    //   label: 'APP首页轮播',
+    //   value: 1
+    // },
+    // {
+    //   label: '闲置首页轮播',
+    //   value: 2
+    // },
     {
-      label: 'PC首页轮播',
-      value: 0
-    },
-    {
-      label: 'APP首页轮播',
-      value: 1
-    },
-    {
-      label: '闲置首页轮播',
-      value: 2
+      label: '工业小店轮播',
+      value: 3
     },
   ];
   const defaultHomeAdvertise = {
@@ -168,6 +170,7 @@
               cancelButtonText: '取消',
               type: 'warning'
             }).then(() => {
+              this.homeAdvertise.type=3
               if (this.isEdit) {
                 updateHomeAdvertise(this.id, this.homeAdvertise).then(response => {
                   this.$refs[formName].resetFields();

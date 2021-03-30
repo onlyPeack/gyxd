@@ -5,7 +5,7 @@ export function selectPage(query) {
     query = Vue.prototype.filterObjSpace(query);
   }
   return request({
-    url: '/api/mall/oms-order/selectPage',
+    url: '/api/mini/order-erp/selectPage',
     method: 'get',
     params: query
   })
@@ -13,21 +13,21 @@ export function selectPage(query) {
 
 export function getAuditOrderTask(masterOrderId) {
   return request({
-    url: '/api/mall/oms-order/getAuditOrderTask?masterOrderId='+ masterOrderId,
+    url: '/api/mini/order/getAuditOrderTask?masterOrderId='+ masterOrderId,
     method: 'post',
   })
 }
 
 export function getOrderDetail(id) {
   return request({
-    url: '/api/mall/oms-order/' + id,
+    url: '/api/mini/order/' + id,
     method: 'get'
   })
 }
 
 export function updateReceiverInfo(obj) {
   return request({
-    url: '/api/mall/oms-order/updateReceiver',
+    url: '/api/mini/order/updateReceiver',
     method: 'post',
     data: obj
   })
@@ -35,7 +35,7 @@ export function updateReceiverInfo(obj) {
 
 export function updateOrderNote(obj) {
   return request({
-    url: '/api/mall/oms-order/updateNote',
+    url: '/api/mini/order/updateNote',
     method: 'post',
     data: obj
   })
@@ -44,7 +44,7 @@ export function updateOrderNote(obj) {
 
 export function closeOrder(obj) {
   return request({
-    url: '/api/mall/oms-order/update/close',
+    url: '/api/mini/order/update/close',
     method: 'post',
     data: obj
   })
@@ -52,21 +52,21 @@ export function closeOrder(obj) {
 
 export function deleteOrder(obj) {
   return request({
-    url: '/api/mall/oms-order/delete',
+    url: '/api/mini/order/delete',
     method: 'post',
     data: obj
   })
 }
 export function auditOrderTask(obj) {
   return request({
-    url: '/api/mall/oms-order/auditOrderTask',
+    url: '/api/mini/order/auditOrderTask',
     method: 'post',
     data: obj
   })
 }
 export function auditOrder(obj) {
   return request({
-    url: '/api/mall/oms-order/auditOrder',
+    url: '/api/mini/order/auditOrder',
     method: 'post',
     data: obj
   })
@@ -75,7 +75,7 @@ export function auditOrder(obj) {
 
 export function updateOrderLabel(obj) {
   return request({
-    url: '/api/mall/oms-order/updateOrderLabel',
+    url: '/api/mini/order/updateOrderLabel',
     method: 'post',
     data: obj
   })
@@ -83,7 +83,7 @@ export function updateOrderLabel(obj) {
 
 export function deliverMainOrder(obj, note) {
   return request({
-    url: `/api/mall/oms-order/deliverMainOrder?masterOrderSns=${obj}&note=${note}`,
+    url: `/api/mini/order/deliverMainOrder?masterOrderSns=${obj}&note=${note}`,
     method: 'post'
   })
 }
@@ -91,28 +91,28 @@ export function deliverMainOrder(obj, note) {
 
 export function deliverSubOrder(obj, note) {
   return request({
-    url: `/api/mall/oms-order/deliverSubOrder?orderSns=${obj}&note=${note}`,
+    url: `/api/mini/order/deliverSubOrder?orderSns=${obj}&note=${note}`,
     method: 'post'
   })
 }
 
 export function doEntrustPay(orderSn) {
   return request({
-    url: `/api/mall/oms-order/doEntrustPay?masterOrderSn=${orderSn}`,
+    url: `/api/mini/order/doEntrustPay?masterOrderSn=${orderSn}`,
     method: 'get'
   })
 }
 
 export function cancelFutureOrderPart(obj) {
   return request({
-    url: '/api/mall/oms-order/cancelFutureOrderPart',
+    url: '/api/mini/order/cancelFutureOrderPart',
     method: 'post',
     data: obj
   })
 }
 export function closeNowOrderSub(obj) {
   return request({
-    url: '/api/mall/oms-order/closeNowOrderSub',
+    url: '/api/mini/order/closeNowOrderSub',
     method: 'post',
     data: obj
   })
@@ -120,7 +120,7 @@ export function closeNowOrderSub(obj) {
 
 export function closeOrderFull(obj) {
   return request({
-    url: '/api/mall/oms-order/closeOrderFull',
+    url: '/api/mini/order/closeOrderFull',
     method: 'post',
     data: obj
   })
@@ -128,14 +128,14 @@ export function closeOrderFull(obj) {
 
 export  function checkLogistics(expressId,mailNo,checkPhoneNo) {
  return request({
-   url: `/api/mall/oms-order/newLogistics?expressId=${expressId}&mailNo=${mailNo}&checkPhoneNo=${checkPhoneNo}`,
+   url: `/api/mini/order/newLogistics?expressId=${expressId}&mailNo=${mailNo}&checkPhoneNo=${checkPhoneNo}`,
    method: 'get'
  })
 }
 
 export  function upload(data) {
  return request({
-   url: `/api/mall/oms-order/upload`,
+   url: `/api/mini/order/upload`,
    method: 'post',
    data
  })
@@ -143,7 +143,7 @@ export  function upload(data) {
 
 export  function upload1(params) {
  return request({
-   url: `/api/mall/oms-order/upload`,
+   url: `/api/mini/order/upload`,
    method: 'get',
    params
  })
@@ -158,7 +158,7 @@ export  function futuresLogistics(orderSn) {
 
 export  function auditOrderForce(id) {
  return request({
-   url: `/api/mall/oms-order/auditOrderForce?id=${id}`,
+   url: `/api/mini/order/auditOrderForce?id=${id}`,
    method: 'post',
  })
 }

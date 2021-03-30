@@ -43,7 +43,7 @@
         <span>{{couponType[row.type]}}</span>
       </el-table-column>
       <el-table-column align="center" label="面额" prop="discountAmount"></el-table-column>
-      <el-table-column align="center" label="总张数" prop="number" sortable></el-table-column>
+      <el-table-column align="center" label="默认发放张数" prop="number" sortable></el-table-column>
       <el-table-column align="center" label="每人可领次数" prop="limitCollar" sortable></el-table-column>
       <el-table-column align="center" label="已领取张数" prop="receive" sortable></el-table-column>
       <el-table-column align="center" label="有效时间" width="250">
@@ -67,6 +67,12 @@
         </template>
         <template slot-scope="scope">
             <el-switch :active-value="1" :inactive-value="0" v-model="scope.row.status" @change="handleUpdateStatus(scope.row)"></el-switch>
+        </template>
+      </el-table-column>
+      <el-table-column align="right" label="默认发放" prop="defaultSend">
+        <template slot-scope="scope" >
+          <span style="color:#F56C6C;" v-if="defaultSendType[scope.row.defaultSend]==='是'">是</span>
+          <span style="color:#67C23A" v-else>否</span>
         </template>
       </el-table-column>
       <el-table-column align="right" label="创建人" prop="crtUserName"></el-table-column>
@@ -100,7 +106,7 @@
           <span style="margin-right: 15px;margin-left: 15px;">元，才可以使用此券</span><div></div>
           <span>备注:代金券不兑现金，不设找零</span>
         </el-form-item>
-        <el-form-item label="总张数:" prop="number">
+        <el-form-item label="默认发放张数:" prop="number">
           <el-input v-model="dataForm.number" autocomplete="off"  placeholder="请输入优惠券数量" style="width: 50%"></el-input>
         </el-form-item>
         <el-form-item label="每个会员id可领张数:" prop="limitCollar">
@@ -122,10 +128,15 @@
         <!--                        <el-checkbox label="券" disabled></el-checkbox>-->
         <!--                    </el-checkbox-group>-->
         <!--                </el-form-item>-->
+        <el-form-item label="默认发放:" prop="defaultSend">
+          <el-radio-group v-model="dataForm.defaultSend">
+            <el-radio :label='value' v-for="(key,value) in defaultSendType">{{key}}</el-radio>
+          </el-radio-group>
+        </el-form-item>
         <el-form-item label="是否启用:" prop="status">
           <el-radio-group v-model="dataForm.status">
-            <el-radio :label='1'>是</el-radio>
             <el-radio :label='0'>否</el-radio>
+            <el-radio :label='1'>是</el-radio>
           </el-radio-group>
         </el-form-item>
       </el-form>
@@ -140,7 +151,7 @@
 
 <script>
   import {createCoupon,page  as pages,updateCoupon,deleteCoupon,updateCouponStatus} from '@/api/erp/marketing/coupon';
-  import {couponType,isExpired} from './common/common'
+  import {couponType,isExpired,defaultSendType} from './common/common'
 
   export default {
     name: 'coupon',
@@ -153,6 +164,7 @@
         analysisIndex: 0,
         couponType,
         isExpired,
+        defaultSendType,
         showDialog:false,
         dataForm:{},
         textMap: {//编辑&新建商品系列弹窗头部文字字典
@@ -166,8 +178,9 @@
             {required: true, message: '赠品库存不能为空', trigger: 'blur'},
             {type: 'number', message: '赠品库存只能为数字', trigger: 'blur'},
           ],
-          'number': [{required: true, message: '总张数不能为空', trigger: 'blur'}],
+          'number': [{required: true, message: '默认发放张数不能为空', trigger: 'blur'}],
           'activityTime': [{required: true, message: '活动时间不能为空', trigger: 'blur'},],
+          'defaultSend': [{required: true, trigger: 'blur'},],
           'status': [{required: true, message: '启用状态不能为空', trigger: 'blur'},],
         },
         dialogStatus:'',
@@ -381,7 +394,7 @@
         }).then(() => {
           let params={
             id:row.id,
-            status:Number(row.status)===1?0:1
+            status:Number(row.status)
           }
           updateCouponStatus(params).then(response => {
             if (Number(response.code) === 2000||Number(response.code)===200) {

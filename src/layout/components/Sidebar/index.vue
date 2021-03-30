@@ -3,7 +3,7 @@
     <el-menu mode="vertical" :default-active="$route.path" :collapse="isCollapse" background-color="#188ae2" text-color="#fff" active-text-color="#409EFF" ref="menuList" @open="opentItem">
       <router-link to="/dashboard">
         <el-menu-item index="首页">
-          <i style="color:#fff;margin-right: 6px;" class="iconfont icon-shouye"></i>
+          <i style="color:#fff;margin-right: 6px;" class="iconfont el-icon-s-home"></i>
           <span slot="title">首页</span>
         </el-menu-item>
       </router-link>

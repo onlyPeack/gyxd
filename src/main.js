@@ -737,6 +737,24 @@ Vue.prototype.oneWeek=function(){
   }
 }
 
+Vue.prototype.color={
+  danger:'#F56C6C',
+  success:'#67C23A',
+  warning:'#E6A23C',
+  info:'#909399',
+  default:'#409EFF'
+}
+
+Vue.prototype.numberSort=new Proxy({}, {
+  get:function (target, p, receiver) {
+    //console.log(target,p,receiver,'testProxy')
+    return function (a,b) {
+      return a[p]-b[p]
+    }
+  }
+})
+
+
 new Vue({
   el: '#app',
   router,

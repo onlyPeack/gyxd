@@ -46,9 +46,9 @@
 
               <!-- 查询结果 -->
               <el-table size="small" :data="list" border fit highlight-current-row>
-                <el-table-column align="center" label="商品编号" prop="goodsId"></el-table-column>
-                <el-table-column align="center" label="产品编号" prop="goodsCode"></el-table-column>
-                <el-table-column align="center" label="商品名称" prop="goodsName"></el-table-column>
+                <el-table-column align="center" label="商品编号" prop="goodsId" ></el-table-column>
+                <el-table-column align="center" label="产品编号" prop="goodsCode" show-overflow-tooltip></el-table-column>
+                <el-table-column align="center" label="商品名称" prop="goodsName" show-overflow-tooltip></el-table-column>
                 <el-table-column align="center" label="订货号" prop="itemNo"></el-table-column>
                 <el-table-column align="center" label="型号" prop="specModel"></el-table-column>
                 <el-table-column align="center" label="零售价" prop="retailPrice"></el-table-column>
@@ -57,12 +57,12 @@
                   <el-image :previewSrcList="[row.url]" :src="row.url" style="width: 80px"></el-image>
                 </el-table-column>
                 <el-table-column align="center" label="操作人" prop="crtUserName"></el-table-column>
-                <el-table-column align="center" label="创建时间" prop="crtTime"></el-table-column>
+                <el-table-column align="center" label="创建时间" prop="crtTime" show-overflow-tooltip></el-table-column>
 
-                <el-table-column align="center" label="操作" width="80" class-name="small-padding fixed-width">
+                <el-table-column align="center" label="操作" width="90" class-name="small-padding fixed-width">
                   <template slot-scope="scope">
                     <!--<el-button type="primary" size="mini" @click="handleUpdate(scope.row)">编辑</el-button>-->
-                    <el-button type="danger" size="mini" @click="handleDelete(scope.row)">删除</el-button>
+                    <el-link :underline="false" @click="handleDelete(scope.row)" type="danger">删除</el-link>
                   </template>
                 </el-table-column>
               </el-table>
@@ -77,10 +77,9 @@
               </div>
 
               <!-- 添加或修改对话框 -->
-              <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
+              <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="40%">
                 <el-form :rules="rules" ref="dataForm" :model="dataForm" status-icon label-position="right"
-                         label-width="100px"
-                         style='width: 400px; margin-left:50px;'>
+                         label-width="100px">
                   <el-form-item label="分类" prop="treeId" v-show="false">
                     <el-input v-model="dataForm.treeId"></el-input>
                   </el-form-item>
@@ -92,7 +91,7 @@
                   </el-form-item>
                   <el-form-item label="商品名称：" prop="goodsName">
                     <div @click.stop="handleProductShow" style="cursor: pointer;">
-                      <el-input v-model="dataForm.goodsName" :disabled="true">
+                      <el-input v-model="dataForm.goodsName" readonly>
                         <i class="el-icon-search" style="color:rgb(42,140,254);font-size: 20px;float: right;cursor: pointer;line-height: 28px" slot="suffix"></i>
                       </el-input>
                     </div>
@@ -100,9 +99,12 @@
                   <el-form-item label="产品编号：" prop="goodsCode">
                     <el-input v-model="dataForm.goodsCode" :disabled="true"></el-input>
                   </el-form-item>
-                  <el-form-item label="图片路径：" prop="url">
-                    <el-input v-model="dataForm.url" :disabled="true"></el-input>
+                  <el-form-item label="价格：" prop="goodsPrice">
+                    <el-input v-model="dataForm.goodsPrice"></el-input>
                   </el-form-item>
+<!--                  <el-form-item label="图片：" prop="url">-->
+<!--                    <el-image :src="dataForm.url" style="width: 80px;height: 80px"></el-image>-->
+<!--                  </el-form-item>-->
 
 
                 </el-form>
@@ -251,6 +253,7 @@
           goodsName: [{required: true, message: '名称不能为空', trigger: 'blur'}],
           url: [{required: true, message: '图片路径不能为空', trigger: 'blur', validator: validatePass}],
           parentName: [{required: true, message: '请点击选择一个分类', trigger: 'blur'}],
+          goodsPrice: [{required: true, message: '价格不能为空', trigger: 'blur'}],
         },
         rulesTree: {
           name: [{required: true, message: '名称不能为空', trigger: 'blur'}],
