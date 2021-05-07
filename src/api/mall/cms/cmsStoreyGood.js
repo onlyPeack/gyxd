@@ -41,3 +41,19 @@ export function putObj(id, obj) {
   })
 }
 
+export function insertBatch(obj) {
+  return request({
+    url: '/api/mini/cmsStoreyGood/insertBatch',
+    method: 'post',
+    data: obj
+  })
+}
+
+export function deleteBatch(obj) {
+  return request({
+    url: '/api/mini/cmsStoreyGood/deleteBatch',
+    method: 'get',
+    params: obj
+  })
+}
+

@@ -17,7 +17,7 @@
                        :value="item.value"></el-option>
           </el-select>
           <el-input clearable class="filter-item" style="width: 190px;" placeholder="商品名称"
-                    @keyup.enter.native="handleFilter" v-model="listQuery.goodsName">
+                    @keyup.enter.native="handleFilter" v-model="listQuery.name">
           </el-input>
           <!--<el-input clearable class="filter-item" style="width: 190px;" placeholder="规格型号"-->
                     <!--@keyup.enter.native="handleFilter" v-model="listQuery.specifications">-->
@@ -102,15 +102,15 @@
 
               <!--<el-table-column align="center" label="商品编码" prop="goodsCode" fixed="left">-->
               <!--</el-table-column>-->
-              <el-table-column type="selection" width="60">
+              <el-table-column type="selection" width="60" align="center">
               </el-table-column>
-              <el-table-column align="center" min-width="100" label="商品名称" prop="name" fixed="left">
+              <el-table-column align="center" min-width="100" label="商品名称" prop="name">
               </el-table-column>
-              <el-table-column align="center" min-width="100" label="品牌名称" prop="brandName" fixed="left">
+              <el-table-column align="center" min-width="100" label="品牌名称" prop="brandName">
               </el-table-column>
-              <el-table-column align="center" min-width="100" label="系列" prop="seriesName" fixed="left">
+              <el-table-column align="center" min-width="100" label="系列" prop="seriesName">
               </el-table-column>
-              <el-table-column align="center" min-width="100" label="规格型号" prop="specModel" fixed="left">
+              <el-table-column align="center" min-width="100" label="规格型号" prop="specModel">
               </el-table-column>
               <el-table-column align="center" min-width="100" label="订货号" prop="itemNo">
               </el-table-column>
@@ -122,6 +122,7 @@
 
               <!--<el-table-column align="center" label="详情" prop="detail">-->
               <!--<template slot-scope="scope">-->
+              <!--<el-dialog title="商品详情" :visible.sync="detailDialogVisible" append-to-body>-->
               <!--<el-dialog title="商品详情" :visible.sync="detailDialogVisible" append-to-body>-->
               <!--<div v-html="goodsDetail"></div>-->
               <!--</el-dialog>-->
@@ -160,8 +161,7 @@
               <!--<el-table-column align="right" label="所属品牌ID" prop="brandId" min-width="100">-->
               <!--</el-table-column>-->
 
-              <el-table-column align="center" label="计量单位" prop="unit">
-              </el-table-column>
+              <el-table-column label="计量单位" prop="unit"></el-table-column>
               <!--<el-table-column align="center" label="是否代销" prop="isAgent">
                 <template slot-scope="scope">
                   <el-tag :type="scope.row.isAgent ? 'success' : 'error' ">{{scope.row.isAgent ? '否' : '是'}}</el-tag>
@@ -195,7 +195,7 @@
               </el-table-column>
               <!--<el-table-column align="center" label="商品编码" prop="skuNo" width="150">-->
               <!--</el-table-column>-->
-              <el-table-column label="商品名称" prop="goodsName" width="150">
+              <el-table-column label="商品名称" prop="name" width="150">
               </el-table-column>
               <el-table-column label="品牌名称" prop="brandName" width="150">
               </el-table-column>
@@ -254,7 +254,7 @@
           categoryId: undefined,
           brandId: undefined,
           skuNo: undefined,
-          goodsName: undefined,
+          name: undefined,
           specifications: undefined,
           itemNo: undefined
 
@@ -376,7 +376,7 @@
         this.$emit('closeGoodsDialog', this.chooseGoods);
       },
       reset() {
-        this.$refs.goodsSelectorTable.clearSelection();
+        //this.$refs.goodsSelectorTable.clearSelection();
         this.chooseGoods = [];
         this.currentGoods = [];
       },

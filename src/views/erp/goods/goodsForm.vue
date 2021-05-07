@@ -2,8 +2,8 @@
   <el-dialog :visible.sync="dialogFormVisible" width="70%" @close="handleDialogClose" class="goodsFormDialog"
              :close-on-click-modal="false" :before-close="handleDialogClose">
     <span slot="title" class="con-title">
-        <span v-if="!goodsId">商品上架</span>
-        <span v-if="goodsId">商品编辑</span>
+<!--        <span v-if="!goodsId">商品上架</span>-->
+        <span>商品编辑</span>
       </span>
 
     <div class="app-container calendar-list-container goods-form-container" :style="{height:clientHeight+'px'}">
@@ -12,7 +12,7 @@
           <tr>
             <td>
               <el-form-item label="商品名称:" prop="name" class="el-form-flex">
-                <el-input v-model="goods.name"></el-input>
+                <el-input v-model="goods.name" disabled></el-input>
               </el-form-item>
             </td>
             <!--<td>-->
@@ -22,26 +22,26 @@
             <!--</td>-->
             <td>
               <el-form-item label="商品标题:" prop="title" class="el-form-flex">
-                <el-input v-model="goods.title"></el-input>
+                <el-input v-model="goods.title" disabled></el-input>
               </el-form-item>
             </td>
           </tr>
           <tr>
             <td>
               <el-form-item label="规格型号:" prop="specModel" class="el-form-flex">
-                <el-input v-model="goods.specModel"></el-input>
+                <el-input v-model="goods.specModel" disabled></el-input>
               </el-form-item>
             </td>
             <td>
               <el-form-item label="订货号:" prop="itemNo" class="el-form-flex">
-                <el-input v-model="goods.itemNo"></el-input>
+                <el-input v-model="goods.itemNo" disabled></el-input>
               </el-form-item>
             </td>
           </tr>
           <tr>
             <td>
               <el-form-item label="产品面价:" prop="retailPrice" class="el-form-flex">
-                <el-input v-model="goods.retailPrice" placeholder="0.00"
+                <el-input v-model="goods.retailPrice" placeholder="0.00" disabled
                           onKeyPress="if((event.keyCode<48 || event.keyCode>57) && event.keyCode!=46)event.returnValue=false"
                           @change="handlePriceInputChange($event,'retailPrice')">
                 </el-input>
@@ -67,7 +67,7 @@
             </td>
             <td>
               <el-form-item label="商品调拨价:" prop="price" class="el-form-flex">
-                <el-input v-model="goods.price" placeholder="0.00"
+                <el-input v-model="goods.price" placeholder="0.00" disabled
                           onKeyPress="if((event.keyCode<48 || event.keyCode>57) && event.keyCode!=46)event.returnValue=false"
                           @change="handlePriceInputChange($event,'price')">
                 </el-input>
@@ -95,12 +95,12 @@
           <tr>
             <td>
               <el-form-item label="安全库存:" prop="safeQty" class="el-form-flex">
-                <el-input v-model="goods.safeQty" onkeyup="this.value=this.value.replace(/\D/g,'')"></el-input>
+                <el-input v-model="goods.safeQty" onkeyup="this.value=this.value.replace(/\D/g,'')" disabled></el-input>
               </el-form-item>
             </td>
             <td>
-              <el-form-item label="最少起订量:" prop="moqMinOrder" class="el-form-flex">
-                <el-input v-model="goods.moqMinOrder" onkeyup="this.value=this.value.replace(/\D/g,'')"></el-input>
+              <el-form-item label="安全点数:" prop="safePoint" class="el-form-flex">
+                <el-input v-model="goods.safePoint" onkeyup="this.value=this.value.replace(/\D/g,'')"></el-input>
               </el-form-item>
             </td>
           </tr>
@@ -121,13 +121,13 @@
           <tr>
             <td>
               <el-form-item label="所属分类:" class="el-form-flex" prop="categoryIds">
-                <el-cascader expand-trigger="hover" :options="categoryList" v-model="goods.categoryIds"
+                <el-cascader expand-trigger="hover" :options="categoryList" v-model="goods.categoryIds" disabled
                              @change="handleCategoryChange" :change-on-select="true" filterable></el-cascader>
               </el-form-item>
             </td>
             <td>
               <el-form-item label="所属品牌商:" class="el-form-flex" prop="brandId">
-                <el-select v-model="goods.brandId" filterable>
+                <el-select v-model="goods.brandId" filterable >
                   <el-option v-for="item in brandList" :key="item.value" :label="item.label" :value="item.value">
                   </el-option>
                 </el-select>
@@ -137,7 +137,7 @@
           <tr>
             <td>
               <el-form-item prop="unit" label="计量单位:" class="el-form-flex">
-                <el-select v-model="goods.unit" placeholder="请选择" size="medium">
+                <el-select v-model="goods.unit" placeholder="请选择" size="medium" disabled>
                   <el-option v-for="item in measureunitList" :key="item.id" :label="item.name"
                              :value="item.name"></el-option>
                 </el-select>
@@ -145,7 +145,7 @@
             </td>
             <td>
               <el-form-item label="系列:" prop="seriesId" class="el-form-flex">
-                <el-select v-model="goods.seriesId" placeholder="请选择">
+                <el-select v-model="goods.seriesId" placeholder="请选择" disabled>
                   <el-option
                     v-for="item in seriesList"
                     :key="item.id"
@@ -159,7 +159,7 @@
           <tr>
             <td>
               <el-form-item label="是否代销:" prop="isAgent" class="el-form-flex">
-                <el-select v-model="goods.isAgent" placeholder="请选择" size="medium">
+                <el-select v-model="goods.isAgent" placeholder="请选择" size="medium" disabled>
                   <el-option label="否" :value="0"></el-option>
                   <el-option label="是" :value="1"></el-option>
                 </el-select>
@@ -167,7 +167,7 @@
             </td>
             <td>
               <el-form-item prop="unit" label="参数模板:" class="el-form-flex">
-                <el-select v-model="goods.productAttributeCategoryId" placeholder="请选择" size="medium" filterable>
+                <el-select v-model="goods.productAttributeCategoryId" placeholder="请选择" size="medium" filterable disabled>
                   <!--<el-option label="实物类商品" :value="0"></el-option>-->
                   <!--<el-option label="服务类商品" :value="1"></el-option>-->
                   <!--<el-option label="虚拟类商品" :value="2"></el-option>-->
@@ -184,20 +184,32 @@
           <tr>
             <td>
               <el-form-item label="重量:" prop="grossWeight" class="el-form-flex">
-                <el-input v-model="goods.grossWeight"></el-input>
+                <el-input v-model="goods.grossWeight" disabled></el-input>
               </el-form-item>
             </td>
             <td>
-              <el-form-item label="关键字:" class="el-form-flex">
+              <el-form-item label="关键字:" class="el-form-flex" disabled>
                 <el-tag :key="tag" v-for="tag in keywords" closable type="primary" @close="handleTagClose(tag)">
                   {{tag}}
                 </el-tag>
-                <el-input class="input-new-keyword" v-if="newKeywordVisible" v-model="newKeyword"
-                          ref="newKeywordInput"
-                          size="small" @keyup.enter.native="handleInputConfirm" @blur="handleInputConfirm">
-                </el-input>
-                <el-button v-else class="button-new-keyword" size="mini" type="primary" @click="showInput">+ 增加
-                </el-button>
+<!--                <el-input class="input-new-keyword" v-if="newKeywordVisible" v-model="newKeyword"-->
+<!--                          ref="newKeywordInput"-->
+<!--                          size="small" @keyup.enter.native="handleInputConfirm" @blur="handleInputConfirm">-->
+<!--                </el-input>-->
+<!--                <el-button v-else class="button-new-keyword" size="mini" type="primary" @click="showInput">+ 增加-->
+<!--                </el-button>-->
+              </el-form-item>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <el-form-item label="最少起订量:" prop="moqMinOrder" class="el-form-flex">
+                <el-input v-model="goods.moqMinOrder" onkeyup="this.value=this.value.replace(/\D/g,'')" disabled></el-input>
+              </el-form-item>
+            </td>
+            <td>
+              <el-form-item label="是否保护:" prop="isProtection" class="el-form-flex">
+                <el-switch v-model="goods.isProtection" :active-value="1" :inactive-value="0"></el-switch>
               </el-form-item>
             </td>
           </tr>
@@ -217,7 +229,14 @@
           <tr>
             <td colspan="2">
               <el-form-item label="商品简介:" class="el-form-flex">
-                <el-input v-model="goods.brief"></el-input>
+                <el-input v-model="goods.brief" disabled></el-input>
+              </el-form-item>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2">
+              <el-form-item label="商品链接:" class="el-form-flex" prop="commodityLink">
+                <el-input v-model="goods.commodityLink"></el-input>
               </el-form-item>
             </td>
           </tr>
@@ -350,12 +369,12 @@
 
       <div class="small-title-div">商品详细介绍</div>
       <div class="el-editor">
-        <editor :init="editorInit" v-model="goods.detail"></editor>
+        <editor :init="editorInit" v-model="goods.detail" :disabled=true></editor>
       </div>
 
       <div class="small-title-div">商品图片</div>
       <div class="goods-img-upload">
-        <el-upload class="avatar-uploader" :action="uploadPath" :show-file-list="false"
+        <el-upload class="avatar-uploader" :action="uploadPath" :show-file-list="false" disabled
                    accept=".jpg,.jpeg,.png,.gif" :on-success="uploadPicUrl">
           <img v-if="goods.picUrl" :src="goods.picUrl" class="avatar">
           <i v-else class="el-icon-plus avatar-uploader-icon"></i>
@@ -366,6 +385,7 @@
         <el-upload
           class="upload-demo"
           :action="uploadPath"
+          disabled
           :show-file-list="true"
           :on-remove="handleRemoves"
           :file-list="fileList"
@@ -504,6 +524,8 @@
           safeDiscount: [{required: true, message: '安全折扣不能为空', trigger: 'blur'}],
           categoryIds: [{required: true, message: '分类不能为空', trigger: 'blur'}],
           brandId: [{required: true, message: '品牌不能为空', trigger: 'blur'}],
+          customerDiscount: [{required: true, message: '商品调拨折扣不能为空', trigger: 'blur'}],
+
         },
         editorInit: {
           language: 'zh_CN',
@@ -543,50 +565,50 @@
         this.goodsAttrCheckAll = isIndeterminate;
         this.goodsAttrList = goodsAttrList;
       },
-      'goods.moqMinOrder': {
-        deep: true,
-        handler: function () {
-          if (this.goods.moqMinOrder * 1 < 1) {
-            this.$message.warning('最少起订量不能小于1');
-          }
-        }
-      },
-      'goods.brandId': {
-        deep: true,
-        handler: function () {
-          if (this.goods.brandId) {
-            this.selectSeriesList(this.goods.brandId);
-          }
-        }
-      },
-      'goods.productAttributeCategoryId': {
-        deep: true,
-        handler: function () {
-          if (this.goods.productAttributeCategoryId) {
-            queryParamsAndAttrByGoodsTypeId(this.goods.productAttributeCategoryId).then(response => {
-              var paramList = response.data.param;
-              this.dataForSpcs = [];
-
-              for (var i in paramList) {
-                if (paramList[i].paramValue.length == 1 && paramList[i].paramValue[0] == '') {
-                  paramList[i].paramValue = [];
-                }
-                var value = undefined;
-                if (this.goods.initAttributes) {
-                  value = this.attributes[i].value;
-                }
-                this.dataForSpcs.push({
-                  stringList: paramList[i].paramValue,
-                  attribute: paramList[i].paramName,
-                  value: value
-                });
-              }
-              this.goods.initAttributes = false;
-
-            })
-          }
-        }
-      }
+      // 'goods.moqMinOrder': {
+      //   deep: true,
+      //   handler: function () {
+      //     if (this.goods.moqMinOrder * 1 < 1) {
+      //       this.$message.warning('最少起订量不能小于1');
+      //     }
+      //   }
+      // },
+      // 'goods.brandId': {
+      //   deep: true,
+      //   handler: function () {
+      //     if (this.goods.brandId) {
+      //       this.selectSeriesList(this.goods.brandId);
+      //     }
+      //   }
+      // },
+      // 'goods.productAttributeCategoryId': {
+      //   deep: true,
+      //   handler: function () {
+      //     if (this.goods.productAttributeCategoryId) {
+      //       queryParamsAndAttrByGoodsTypeId(this.goods.productAttributeCategoryId).then(response => {
+      //         var paramList = response.data.param;
+      //         this.dataForSpcs = [];
+      //
+      //         for (var i in paramList) {
+      //           if (paramList[i].paramValue.length == 1 && paramList[i].paramValue[0] == '') {
+      //             paramList[i].paramValue = [];
+      //           }
+      //           var value = undefined;
+      //           if (this.goods.initAttributes) {
+      //             value = this.attributes[i].value;
+      //           }
+      //           this.dataForSpcs.push({
+      //             stringList: paramList[i].paramValue,
+      //             attribute: paramList[i].paramName,
+      //             value: value
+      //           });
+      //         }
+      //         this.goods.initAttributes = false;
+      //
+      //       })
+      //     }
+      //   }
+      // }
     },
     methods: {
       handleRemoves(file, fileList) {
@@ -660,6 +682,7 @@
         }
         listCatAndBrand().then(response => {
           this.categoryList = this.getCategoryList(response.data.categoryList);
+          this.$set(this.goods,'categoryIds',this.goods.categoryIds)
           this.brandList = response.data.brandList;
         });
         goodsTypePage().then(response => {

@@ -1,7 +1,7 @@
 <template>
   <div class="app-container calendar-list-container">
     <el-row>
-      <el-col :span="8">
+      <el-col :span="6">
         <div class="grid-content bg-purple" style="margin-right: 10px">
           <el-card class="box-card">
             <div slot="header" class="clearfix">
@@ -25,7 +25,7 @@
           </el-card>
         </div>
       </el-col>
-      <el-col :span="16" style="height:100%">
+      <el-col :span="18" style="height:100%">
         <div class="grid-content bg-purple-light">
           <el-card class="box-card" style="height:100%">
             <div slot="header" class="clearfix">
@@ -35,36 +35,43 @@
 
               <!-- 查询和其他操作 -->
               <div class="filter-container">
-                <el-input clearable class="filter-item" style="width: 200px;" placeholder="请输入商品SKU"
-                          v-model="listQuery.goodsId">
+                <el-input clearable class="filter-item" style="width: 200px;" placeholder="商品编号" v-model="listQuery.goodsId">
+                </el-input>
+                <el-input clearable class="filter-item" style="width: 200px;" placeholder="商品名称" v-model="listQuery.goodsName">
+                </el-input>
+                <el-input clearable class="filter-item" style="width: 200px;" placeholder="订货号" v-model="listQuery.itemNo">
+                </el-input>
+                <el-input clearable class="filter-item" style="width: 200px;" placeholder="型号" v-model="listQuery.specModel">
                 </el-input>
                 <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">搜索</el-button>
-                <el-button class="filter-item" type="danger" icon="el-icon-delete" @click="resetQuery">重置</el-button>
+                <el-button class="filter-item" icon="el-icon-refresh" @click="resetQuery">重置</el-button>
                 <el-button class="filter-item" type="success" icon="el-icon-plus" @click="handleCreate">添加商品</el-button>
+                <el-button class="filter-item" type="danger" icon="el-icon-delete" @click="handleDelete">删除</el-button>
 
               </div>
 
               <!-- 查询结果 -->
-              <el-table size="small" :data="list" border fit highlight-current-row>
-                <el-table-column align="center" label="商品编号" prop="goodsId" ></el-table-column>
-                <el-table-column align="center" label="产品编号" prop="goodsCode" show-overflow-tooltip></el-table-column>
-                <el-table-column align="center" label="商品名称" prop="goodsName" show-overflow-tooltip></el-table-column>
-                <el-table-column align="center" label="订货号" prop="itemNo"></el-table-column>
-                <el-table-column align="center" label="型号" prop="specModel"></el-table-column>
-                <el-table-column align="center" label="零售价" prop="retailPrice"></el-table-column>
-                <el-table-column align="center" label="订货价" prop="goodsPrice"></el-table-column>
+              <el-table size="small" :data="list" border fit highlight-current-row @selection-change="handleSelectionChange" v-loading="listLoading">
+                <el-table-column align="center" type="selection"></el-table-column>
+                <el-table-column align="center" label="商品编号" prop="goodsId" width="90"></el-table-column>
+                <el-table-column label="产品编号" prop="goodsCode" show-overflow-tooltip></el-table-column>
+                <el-table-column label="商品名称" prop="goodsName" show-overflow-tooltip></el-table-column>
+                <el-table-column label="订货号" prop="itemNo"></el-table-column>
+                <el-table-column label="型号" prop="specModel"></el-table-column>
+                <el-table-column align="right" label="零售价" prop="retailPrice"></el-table-column>
+                <el-table-column align="right" label="订货价" prop="goodsPrice"></el-table-column>
                 <el-table-column align="center" label="图片" prop="url" width="180" v-slot="{row}">
-                  <el-image :previewSrcList="[row.url]" :src="row.url" style="width: 80px"></el-image>
+                  <el-image :src="row.url" :previewSrcList="[row.url]" style="width: 80px"></el-image>
                 </el-table-column>
-                <el-table-column align="center" label="操作人" prop="crtUserName"></el-table-column>
-                <el-table-column align="center" label="创建时间" prop="crtTime" show-overflow-tooltip></el-table-column>
+                <el-table-column label="操作人" prop="crtUserName"></el-table-column>
+                <el-table-column label="创建时间" prop="crtTime" show-overflow-tooltip></el-table-column>
 
-                <el-table-column align="center" label="操作" width="90" class-name="small-padding fixed-width">
-                  <template slot-scope="scope">
-                    <!--<el-button type="primary" size="mini" @click="handleUpdate(scope.row)">编辑</el-button>-->
-                    <el-link :underline="false" @click="handleDelete(scope.row)" type="danger">删除</el-link>
-                  </template>
-                </el-table-column>
+<!--                <el-table-column align="center" label="操作" width="90" class-name="small-padding fixed-width">-->
+<!--                  <template slot-scope="scope">-->
+<!--                    &lt;!&ndash;<el-button type="primary" size="mini" @click="handleUpdate(scope.row)">编辑</el-button>&ndash;&gt;-->
+<!--                    <el-link :underline="false" @click="handleDelete(scope.row)" type="danger">删除</el-link>-->
+<!--                  </template>-->
+<!--                </el-table-column>-->
               </el-table>
 
               <!-- 分页-->
@@ -99,9 +106,9 @@
                   <el-form-item label="产品编号：" prop="goodsCode">
                     <el-input v-model="dataForm.goodsCode" :disabled="true"></el-input>
                   </el-form-item>
-                  <el-form-item label="价格：" prop="goodsPrice">
-                    <el-input v-model="dataForm.goodsPrice"></el-input>
-                  </el-form-item>
+<!--                  <el-form-item label="价格：" prop="goodsPrice">-->
+<!--                    <el-input v-model="dataForm.goodsPrice"></el-input>-->
+<!--                  </el-form-item>-->
 <!--                  <el-form-item label="图片：" prop="url">-->
 <!--                    <el-image :src="dataForm.url" style="width: 80px;height: 80px"></el-image>-->
 <!--                  </el-form-item>-->
@@ -117,39 +124,38 @@
 
 
               <!-- 添加或修改分类对话框 -->
-              <el-dialog :title="textMap[dialogStatusTree]" :visible.sync="dialogFormVisibleTree">
-                <el-form :rules="rulesTree" ref="dataTreeForm" :model="dataTreeForm" status-icon label-position="left"
-                         label-width="100px"
-                         style='width: 400px; margin-left:50px;'>
+              <el-dialog :title="textMap[dialogStatusTree]" :visible.sync="dialogFormVisibleTree" width="40%">
+                <el-form :rules="rulesTree" ref="dataTreeForm" :model="dataTreeForm" status-icon label-position="right"
+                         label-width="200px">
                   <el-form-item label="ID" prop="id" v-show="false">
-                    <el-input v-model="dataTreeForm.id" :disabled="true"></el-input>
+                    <el-input v-model="dataTreeForm.id" :disabled="true" style="width: 300px"></el-input>
                   </el-form-item>
                   <el-form-item label="父级ID" prop="parentId" v-show="false">
-                    <el-input v-model="dataTreeForm.parentId" :disabled="true"></el-input>
+                    <el-input v-model="dataTreeForm.parentId" :disabled="true" style="width: 300px"></el-input>
                   </el-form-item>
                   <el-form-item label="父级名称" prop="parentName" v-show="dialogStatusTree==='create'">
-                    <el-input v-model="dataTreeForm.parentName" :disabled="true"></el-input>
+                    <el-input v-model="dataTreeForm.parentName" :disabled="true" style="width: 300px"></el-input>
                   </el-form-item>
                   <el-form-item label="分类名称" prop="name">
-                    <el-input v-model="dataTreeForm.name"></el-input>
+                    <el-input v-model="dataTreeForm.name" style="width: 300px"></el-input>
                   </el-form-item>
                   <el-form-item label="类型(分类可添加商品)" prop="level">
-                    <el-select v-model="dataTreeForm.level" style="width: 100%;">
+                    <el-select v-model="dataTreeForm.level" style="width: 300px;">
                       <el-option v-for="item in levelOptions" :key="item.label" :label="item.label"
                                  :value="item.value">
                       </el-option>
                     </el-select>
                   </el-form-item>
-                  <el-form-item label="图片" prop="url" v-if="dataTreeForm.level=='1'">
-                    <el-upload class="avatar-uploader" :action='uploadPath' list-type="picture-card"
-                               :show-file-list="false"
-                               accept=".jpg,.jpeg,.png,.gif" :on-success="uploadPicUrl">
-                      <img v-if="dataTreeForm.url && dataTreeForm.url!=''" :src="dataTreeForm.url" class="avatar" style="width: auto;height: 148px;">
-                      <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-                    </el-upload>
-                  </el-form-item>
+<!--                  <el-form-item label="图片" prop="url" v-if="dataTreeForm.level=='1'">-->
+<!--                    <el-upload class="avatar-uploader" :action='uploadPath' list-type="picture-card"-->
+<!--                               :show-file-list="false"-->
+<!--                               accept=".jpg,.jpeg,.png,.gif" :on-success="uploadPicUrl">-->
+<!--                      <img v-if="dataTreeForm.url && dataTreeForm.url!=''" :src="dataTreeForm.url" class="avatar" style="width: auto;height: 148px;">-->
+<!--                      <i v-else class="el-icon-plus avatar-uploader-icon"></i>-->
+<!--                    </el-upload>-->
+<!--                  </el-form-item>-->
                   <el-form-item label="排序" prop="sort">
-                    <el-input v-model="dataTreeForm.sort"></el-input>
+                    <el-input v-model="dataTreeForm.sort" style="width: 300px"></el-input>
                   </el-form-item>
                 </el-form>
                 <div slot="footer" class="dialog-footer">
@@ -168,13 +174,15 @@
       </el-col>
     </el-row>
     <!-- 所有商品弹窗-->
-    <el-dialog title="所有商品" width="60%" :visible.sync="productVisible" append-to-body class="goodsDialog">
-      <goods-selector ref="goodsSelector" :isSingle="false" @closeGoodsDialog="closeGoodsDialog"></goods-selector>
+    <el-dialog title="所有商品" width="70%" v-if="productVisible" :visible.sync="productVisible" append-to-body class="goodsDialog">
+      <goods-selector ref="goodsSelector" :isSingle="false" @closeGoodsDialog="closeGoodsDialog" :isSelectPage="true"></goods-selector>
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleCloseProduct">取 消</el-button>
         <el-button type="primary" @click="handleSubmitProduct">确 定</el-button>
       </span>
     </el-dialog>
+
+
   </div>
 
 
@@ -182,7 +190,7 @@
 
 <script>
   import {fetchTree, getTreeObj, addTreeObj, delTreeObj, putTreeObj} from '@/api/mall/cms/cmsStoreyTree';
-  import {page, addObj, getObj, delObj, putObj} from '@/api/mall/cms/cmsStoreyGood'
+  import {page, addObj, getObj, delObj, putObj,insertBatch,deleteBatch} from '@/api/mall/cms/cmsStoreyGood'
   import {uploadPath} from '@/api/erp/goods/storage'
 
   export default {
@@ -236,6 +244,7 @@
         selectedProducts: [],
         dialogStatus: '',
         dialogStatusTree: '',
+        selectedRows:[],
         textMap: {
           update: '编辑',
           create: '创建'
@@ -328,8 +337,13 @@
 
       //重置查询条件
       resetQuery() {
-        this.listQuery.name = undefined;
-        this.listQuery.treeIds = undefined;
+        delete this.listQuery.name
+        delete this.listQuery.treeIds
+        delete this.listQuery.specModel
+        delete this.listQuery.goodsName
+        delete this.listQuery.itemNo
+        delete this.listQuery.goodsId
+        this.handleFilter()
       },
       handleCreate() {
         if (this.$refs.documentTree.getCurrentNode() === null) {
@@ -350,15 +364,17 @@
           });
           return;
         }
-        this.resetForm();
-        this.dataForm.treeId = this.$refs.documentTree.getCurrentNode().id;
-        this.dataForm.treeIds = this.$refs.documentTree.getCurrentNode().parentIds + "," + this.$refs.documentTree.getCurrentNode().id;
-        this.dataForm.parentName = this.$refs.documentTree.getCurrentNode().name;
-        this.dialogStatus = 'create';
-        this.dialogFormVisible = true;
-        this.$nextTick(() => {
-          this.$refs['dataForm'].clearValidate();
-        })
+        // this.resetForm();
+        // this.dataForm.treeId = this.$refs.documentTree.getCurrentNode().id;
+        // console.log(this.$refs.documentTree.getCurrentNode().parentIds,'ids')
+        // this.dataForm.treeIds = this.$refs.documentTree.getCurrentNode().parentIds + "," + this.$refs.documentTree.getCurrentNode().id;
+        // this.dataForm.parentName = this.$refs.documentTree.getCurrentNode().name;
+        // this.dialogStatus = 'create';
+        // this.dialogFormVisible = true;
+        // this.$nextTick(() => {
+        //   this.$refs['dataForm'].clearValidate();
+        // })
+        this.productVisible=true
       },
       createData() {
         this.$refs['dataForm'].validate((valid) => {
@@ -502,13 +518,17 @@
           }
         });
       },
-      handleDelete(row) {
+      handleDelete() {
         this.$confirm('此操作将永久删除, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          delObj(row.id).then(() => {
+          let ids=[]
+          for (let i = 0; i <this.selectedRows.length ; i++) {
+            ids.push(this.selectedRows[i].id)
+          }
+          deleteBatch({id:ids.toString()}).then(() => {
             this.$notify({
               title: '成功',
               message: '删除成功',
@@ -567,26 +587,43 @@
         this.$refs.goodsSelector.reset();
       },
       closeGoodsDialog(list) {
-        if (list.length == 0) {
+        if (list.length === 0) {
           this.productVisible = false;
           return;
-        } else if (list.length > 1) {
-          this.$message.error('只能选择一个商品');
-          return;
         }
-        this.dataForm.goodsId = list[0].goodsId;
-        this.dataForm.goodsName = list[0].goodsName;
-        this.dataForm.goodsCode = list[0].skuNo;
-        this.dataForm.url = list[0].url;
-        this.productVisible = false;
-        this.$refs.goodsSelector.reset();
-        this.$refs['dataForm'].validate(valid => {
-        });
+        for (let i = 0; i <list.length ; i++) {
+          list[i].goodsId=list[i].id
+          list[i].goodsName=list[i].name
+          list[i].url=list[i].picUrl
+          list[i].treeId = this.$refs.documentTree.getCurrentNode().id;
+          // console.log(this.$refs.documentTree.getCurrentNode().parentIds,'ids')
+          list[i].treeIds = this.$refs.documentTree.getCurrentNode().parentIds + "," + this.$refs.documentTree.getCurrentNode().id;
+          list[i].parentName = this.$refs.documentTree.getCurrentNode().name;
+        }
+        insertBatch(list).then(res=>{
+          this.$refs.goodsSelector.reset();
+          if(Number(res.code)===2000||Number(res.code)===200){
+            this.productVisible = false
+            this.$message.success('上架商品成功!')
+          }else{
+            this.$message.error('上架商品失败!'+res.msg)
+          }
+          this.getList()
+        })
+        // this.dataForm.goodsId = list[0].id;
+        // this.dataForm.goodsName = list[0].name;
+        // this.dataForm.goodsCode = list[0].goodsCode;
+        // this.dataForm.url = list[0].picUrl;
+
+
       },
       handleSubmitProduct() {
         this.$refs.goodsSelector.OnSubmit();
       },
 
+      handleSelectionChange(val){
+        this.selectedRows=val
+      },
     }
   };
 </script>

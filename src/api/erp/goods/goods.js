@@ -152,3 +152,11 @@ export function downTemplate() {
     responseType: 'blob'
   })
 }
+
+export function updateBatch(data) {
+  return request({
+    url: 'api/mini/goods/updateBatch',
+    method: 'post',
+    data
+  })
+}

@@ -55,18 +55,18 @@ module.exports = {
       // }
       '/api/mini': {
         // target: 'http://47.92.91.63:8765', //正式
-        // target: 'http://192.168.1.219:8765',//测试
-        target: 'http://192.168.1.57:8765',//开发
-        // target: 'http://192.168.1.55:10030',//史
+        target: 'http://192.168.1.219:8765',//测试
+        // target: 'http://192.168.1.171:10050',//开发
+        // target: 'http://192.168.1.55:10050',//史
         // logLevel:'debug',
         pathRewrite: {
-          '^/api/mini': '/api/mini'
+          '^/api/mini': ''
         }
       },
       '/api': {
         // target: 'http://47.92.91.63:8765', //正式
-        // target: 'http://192.168.1.219:8765',//测试
-        target: 'http://192.168.1.57:8765',//开发
+        target: 'http://192.168.1.219:8765',//测试
+        // target: 'http://192.168.1.57:8765',//开发
         // logLevel:'debug',
         pathRewrite: {
           '^/api': '/api/'

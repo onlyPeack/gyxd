@@ -20,7 +20,7 @@ export function getAuditOrderTask(masterOrderId) {
 
 export function getOrderDetail(id) {
   return request({
-    url: '/api/mini/order/' + id,
+    url: '/api/mini/order-erp/select?id=' + id,
     method: 'get'
   })
 }
@@ -66,7 +66,7 @@ export function auditOrderTask(obj) {
 }
 export function auditOrder(obj) {
   return request({
-    url: '/api/mini/order/auditOrder',
+    url: '/api/mini/order/auditOrderFirst',
     method: 'post',
     data: obj
   })
@@ -160,6 +160,14 @@ export  function auditOrderForce(id) {
  return request({
    url: `/api/mini/order/auditOrderForce?id=${id}`,
    method: 'post',
+ })
+}
+
+export  function pushOrder(data) {
+ return request({
+   url: `/api/mini/order/pushOrder`,
+   method: 'post',
+   data
  })
 }
 

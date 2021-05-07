@@ -13,3 +13,10 @@ export const shopSource={
   0:'转换',
   1:'推荐'
 }
+
+export const goodsType={
+  0:'现货',
+  1:'调拨',
+  2:'期货'
+}
+

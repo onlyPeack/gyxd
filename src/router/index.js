@@ -2021,90 +2021,29 @@ export const asyncRoutes = [
     ]
   },
 
-  // /**************************************** 统计分析模块start ****************************************/
-  // {
-  //   path: '/analysis',
-  //   component: Layout,
-  //   name: '统计分析',
-  //   icon: 'setting',
-  //   authority: 'analysis',
-  //   children: [
-  //     {
-  //       path: '/sales/customerReceivable',
-  //       name: '应收分析',
-  //       component: resolve => require(['@/views/erp/analysis/sales/customerReceivable'], resolve),
-  //       authority: 'customerReceivable'
-  //     },
-  //     {
-  //       path: '/sales/salesProfit',
-  //       name: '销售毛利分析',
-  //       component: resolve => require(['@/views/erp/analysis/sales/salesProfit'], resolve),
-  //       authority: 'salesProfit'
-  //     },
-  //     {
-  //       path: '/sales/orderConversion',
-  //       name: '订单转化分析',
-  //       component: resolve => require(['@/views/erp/analysis/sales/orderConversion'], resolve),
-  //       authority: 'orderConversion'
-  //     },
-  //     {
-  //       path: '/sales/salesArea',
-  //       name: '销售区域分析',
-  //       component: resolve => require(['@/views/erp/analysis/sales/salesArea'], resolve),
-  //       authority: 'salesArea'
-  //     },
-  //     {
-  //       path: '/sales/saleCheckAnalysis',
-  //       name: '销售综合分析',
-  //       component: resolve => require(['@/views/erp/analysis/sales/saleCheckAnalysis'], resolve),
-  //       authority: 'saleCheckAnalysis'
-  //     },
-  //     {
-  //       path: '/purchase/suppilerPay',
-  //       name: '应付统计',
-  //       component: resolve => require(['@/views/erp/analysis/purchase/suppilerPay'], resolve),
-  //       authority: 'suppilerPay'
-  //     },
-  //     {
-  //       path: '/purchase/purchaseStockIn',
-  //       name: '采购入库综合分析',
-  //       component: resolve => require(['@/views/erp/analysis/purchase/purchaseStockIn'], resolve),
-  //       authority: 'purchaseStockIn'
-  //     },
-  //     {
-  //       path: '/purchase/purchaseOrder',
-  //       name: '采购订单综合分析',
-  //       component: resolve => require(['@/views/erp/analysis/purchase/purchaseOrder'], resolve),
-  //       authority: 'purchaseOrder'
-  //     },
-  //     {
-  //       path: '/purchase/channelAnalysis',
-  //       name: '渠道贡献分析',
-  //       component: resolve => require(['@/views/erp/analysis/purchase/channelAnalysis'], resolve),
-  //       authority: 'channelAnalysis'
-  //     },
-  //     {
-  //       path: '/storage/stockAmountAnalysis',
-  //       name: '库存余额综合统计',
-  //       component: resolve => require(['@/views/erp/analysis/storage/stockAmountAnalysis'], resolve),
-  //       authority: 'stockAmountAnalysis'
-  //     },
-  //     {
-  //       path: '/storage/stockTurnover',
-  //       name: '库存周转率分析',
-  //       component: resolve => require(['@/views/erp/analysis/storage/stockTurnover'], resolve),
-  //       authority: 'stockTurnover'
-  //     },
-  //     {
-  //       path: '/log/customerOperationLog',
-  //       name: '客户操作日志',
-  //       component: resolve => require(['@/views/erp/analysis/log/customerOperationLog'], resolve),
-  //       authority: 'customerOperationLog'
-  //     },
-  //
-  //   ]
-  // },
-  // /**************************************** 统计分析模块end ****************************************/
+  /**************************************** 统计分析模块start ****************************************/
+  {
+    path: '/analysis',
+    component: Layout,
+    name: '统计分析',
+    icon: 'setting',
+    authority: 'analysis',
+    children: [
+      {
+        path: 'visitorVolume',
+        name: '店主访问量',
+        component: resolve => require(['@/views/erp/analysis/visitorVolume'], resolve),
+        authority: 'visitorVolume'
+      },
+      {
+        path: 'managementAnalysis',
+        name: '基础分析',
+        component: resolve => require(['@/views/erp/analysis/managementAnalysis'], resolve),
+        authority: 'managementAnalysis'
+      },
+    ]
+  },
+  /**************************************** 统计分析模块end ****************************************/
   /**************************************** 营销模块Start ****************************************/
   {
     path: '/marketing',
@@ -2140,6 +2079,24 @@ export const asyncRoutes = [
         component: resolve => require(['@/views/erp/shopkeeper/checkPending'], resolve),
         authority: 'checkPending'
       },
+      {
+        path: 'shopList',
+        name: '店铺列表',
+        component: resolve => require(['@/views/erp/shopkeeper/shopList'], resolve),
+        authority: 'shopList'
+      },
+      {
+        path: 'shopForm',
+        name: '店铺详情',
+        component: resolve => require(['@/views/erp/shopkeeper/shopForm'], resolve),
+        authority: 'shopForm'
+      },
+      {
+        path: 'levelScheme',
+        name: '级别方案',
+        component: resolve => require(['@/views/erp/shopkeeper/levelScheme'], resolve),
+        authority: 'levelScheme'
+      },
     ]
   },
   /**************************************** 店主管理模块end ****************************************/
@@ -2155,6 +2112,18 @@ export const asyncRoutes = [
         name: '意见反馈',
         component: resolve => require(['@/views/erp/operation/feedback'], resolve),
         authority: 'feedback'
+      },
+      {
+        path: 't-goods-warehouse-radiation',
+        name: '仓库辐射管理',
+        component: resolve => require(['@/views/erp/operation/t-goods-warehouse-radiation'], resolve),
+        authority: 't-goods-warehouse-radiation'
+      },
+      {
+        path: 'message',
+        name: '消息管理',
+        component: resolve => require(['@/views/erp/operation/message'], resolve),
+        authority: 'message'
       },
     ]
   },

@@ -2,52 +2,38 @@
   <div class="app-container calendar-list-container sales-detail-list-container full-purchase bill-container">
 
     <!-- 查询和其他操作 -->
-    <div class="filter-container sales-detail-list-filter-container">
+    <div class="filter-container sales-detail-list-filter-container" v-if="false">
       <div>
-        <el-input clearable class="filter-item" style="width: 200px;" placeholder="店铺名称"
+        <el-input clearable class="filter-item" style="width: 200px;" placeholder="优惠券名称"
                   @keyup.enter.native="handleFilter" v-model="listQuery.name">
         </el-input>
-        <el-input clearable class="filter-item" style="width: 200px;" placeholder="店铺等级"
-                  @keyup.enter.native="handleFilter" v-model="listQuery.shopLevel">
-        </el-input>
-        <el-input clearable class="filter-item" style="width: 200px;" placeholder="联系人"
-                  @keyup.enter.native="handleFilter" v-model="listQuery.name">
-        </el-input>
-        <el-input clearable class="filter-item" style="width: 200px;" placeholder="联系电话"
-                  @keyup.enter.native="handleFilter" v-model="listQuery.phone">
-        </el-input>
+        <el-date-picker
+          v-model="billDate"
+          type="daterange"
+          align="right"
+          unlink-panels
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          value-format="yyyy-MM-dd">
+        </el-date-picker>
         <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">查询</el-button>
         <el-button class="filter-item" type="warning" @click="handleReset" icon="el-icon-delete">重置</el-button>
       </div>
     </div>
     <div style="margin-top: 1px;">
-      <!--      <el-button type="text" icon="el-icon-plus" @click="handleCreate">新建</el-button>-->
-<!--      <el-button type="text" icon="el-icon-edit" @click="handleUpdate" :disabled="btnStatus.audit">审核</el-button>-->
-      <!--      <el-button type="text" icon="el-icon-delete" @click="handleRowDelete" :disabled="btnStatus.del">删除</el-button>-->
+      <el-button type="text" icon="el-icon-plus" @click="handleCreate">新建</el-button>
+      <el-button type="text" icon="el-icon-edit" @click="handleUpdate">编辑</el-button>
+      <el-button type="text" icon="el-icon-delete" @click="handleRowDelete">删除</el-button>
     </div>
     <!-- 查询结果 -->
     <el-table size="small" :data="list" v-loading="listLoading" element-loading-text="正在查询中。。。" border fit ref="analysisTable"
-              highlight-current-row  @selection-change="handleSelectionChange" :height="clientHeight">
+              highlight-current-row :height="clientHeight" @selection-change="handleSelectionChange">
       <el-table-column type="selection" align="center"></el-table-column>
       <el-table-column type="index" label="序号" align="center"></el-table-column>
-      <el-table-column prop="id" label="ID" width="100"></el-table-column>
-      <el-table-column align="center" label="店标" prop="logo" width="100" v-slot="{row}">
-        <el-image :previewSrcList="[row.logo]" :src="row.logo" ></el-image>
-      </el-table-column>
-      <el-table-column label="店名" prop="storeName" v-slot="{row}">
-        <el-link :underline="false" @click="showShopDetail(row)" type="primary">{{row.storeName}}</el-link>
-      </el-table-column>
-<!--      <el-table-column align="center" label="用户名" prop="nickName"></el-table-column>-->
-      <el-table-column label="联系人" prop="name"></el-table-column>
-      <el-table-column label="联系电话" prop="phone"></el-table-column>
-      <el-table-column label="开店时间" prop="crtTime"></el-table-column>
-      <el-table-column label="店铺类型" prop="type" v-slot="{row}">
-        <span>{{shopType[row.type]}}</span>
-      </el-table-column>
-      <el-table-column label="企业抬头" prop="businessRise"></el-table-column>
-      <el-table-column label="行业" prop="industryName"></el-table-column>
-      <el-table-column label="客服" prop="serviceName"></el-table-column>
-      <el-table-column label="推荐人" prop="recommend"></el-table-column>
+      <el-table-column align="center" label="配送城市" prop="city" sortable></el-table-column>
+      <el-table-column label="仓库名称" prop="warehouseName" align="center"></el-table-column>
+
 
     </el-table>
 
@@ -56,58 +42,96 @@
       <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange"
                      :current-page="listQuery.page"
                      :page-sizes="[10,20,30,50]" :page-size="listQuery.limit"
-                     layout="total, sizes, prev, pager, next, jumper" :total="total">
+                     layout="total" :total="total">
       </el-pagination>
     </div>
-    <el-dialog modal-append-to-body append-to-body title="店铺详情" :visible.sync="isShowShopDetail" v-if="isShowShopDetail" width="65%" top="5vh">
-      <shop-detail :id="nowRow.id"></shop-detail>
-      <div style="height: 15px"></div>
+
+    <el-dialog :visible.sync="showDialog" v-if="showDialog" width="40%" :close-on-click-modal="false"
+               :title="textMap[dialogStatus]" append-to-body class="public-dialog">
+      <el-form :model="dataForm" ref="dataForm" label-position="right" label-width="160px" size="medium" :rules="rules">
+        <el-form-item label="仓库:" prop="warehouseName">
+          <div @click="warehouseVisible=true">
+            <el-input v-model="dataForm.warehouseName" autocomplete="off"  placeholder="请选择仓库" style="width: 50%">
+              <i class="el-icon-search" style="color:rgb(42,140,254);font-size: 20px;float: right;cursor: pointer;line-height: 34px" slot="suffix"></i>
+            </el-input>
+          </div>
+
+        </el-form-item>
+        <el-form-item label="配送城市:" prop="regionCodes">
+          <el-cascader
+            :options="provinceAndCityData"
+            :show-all-levels="false"
+            style="width: 50%"
+            v-model="dataForm.regionCodes"
+            @change="handleChange">
+          </el-cascader>
+        </el-form-item>
+
+      </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="isShowShopDetail=false" :loading="isLoading">取 消</el-button>
-        <el-button type="warning" @click="handleSubmit(1)" :loading="isLoading" v-if="!btnStatus.audit">驳 回</el-button>
-        <el-button type="primary" @click="handleSubmit(2)" :loading="isLoading" v-if="!btnStatus.audit">通 过</el-button>
+        <el-button @click="showDialog=false">取 消</el-button>
+        <el-button type="primary" @click="handleSubmit" :loading="isLoading">确 认</el-button>
       </div>
+
+      <!-- 仓库弹窗-->
+      <el-dialog title="请选择仓库" :visible.sync="warehouseVisible" append-to-body>
+        <warehouse-selector @closeWarehouseDialog="closeWarehouseDialog" :isSingle="true"
+                            ref="warehouse"></warehouse-selector>
+        <span slot="footer" class="dialog-footer">
+        <el-button @click="handleCancelWarehouse">取 消</el-button>
+        <el-button type="primary" @click="handleSubmitWarehouse">确 定</el-button>
+      </span>
+      </el-dialog>
     </el-dialog>
 
   </div>
 </template>
 
 <script>
-  import {selectPage  as pages,auditStatus} from '@/api/erp/shopkeeper/shopList';
-  import {shopType} from './common/common'
-  import shopDetail from './common/shopDetail'
+  import {createObj,page  as pages,updateCoupon,deleteCoupon,updateCouponStatus} from '@/api/erp/operation/t-goods-warehouse-radiation';
+  import {CodeToText,provinceAndCityData,TextToCode } from 'element-china-area-data'
+  // import {couponType,isExpired,defaultSendType} from './common/common'
 
   export default {
-    name: 'shopList',
+    name: 't-goods-warehouse-radiation',
+    components: {
+      'warehouse-selector': () => import('@/components/ERP/Warehouse/WarehouseSelector')
+    },
     data() {
       return {
         clientHeight: 300,
         list: undefined,
         total: undefined,
-        shopType,
-        isShowShopDetail:false,
-        nowRow:{},
         listLoading: false,
+        warehouseVisible:false,
+        provinceAndCityData,
+        TextToCode,
+        analysisIndex: 0,
+        // couponType,
+        // isExpired,
+        // defaultSendType,
         showDialog:false,
         dataForm:{},
-        textMap: {//编辑&新建商品系列弹窗头部文字字典
-          update: '编辑优惠券',
-          create: '新增优惠券'
+        textMap: {//编辑&新建头部文字字典
+          update: '编辑仓库辐射',
+          create: '新增仓库辐射'
         },
         rules: {//新增&编辑赠品表单验证
-          'limitCollar': [{required: true, message: '参与次数不能为空', trigger: 'blur'}],
-          'name': [{required: true, message: '优惠券名称不能为空', trigger: 'blur'}],
+          'warehouseName': [{required: true, message: '仓库不能为空', trigger: 'blur'}],
+          'regionCodes': [{required: true, message: '配送城市', trigger: 'blur'}],
           'stock': [
             {required: true, message: '赠品库存不能为空', trigger: 'blur'},
             {type: 'number', message: '赠品库存只能为数字', trigger: 'blur'},
           ],
-          'number': [{required: true, message: '总张数不能为空', trigger: 'blur'}],
+          'number': [{required: true, message: '默认发放张数不能为空', trigger: 'blur'}],
           'activityTime': [{required: true, message: '活动时间不能为空', trigger: 'blur'},],
+          'defaultSend': [{required: true, trigger: 'blur'},],
           'status': [{required: true, message: '启用状态不能为空', trigger: 'blur'},],
         },
         dialogStatus:'',
         btnStatus:{
-          audit:false,
+          edit:false,
+          del:false
         },
         selectedRows:[],
         isLoading:false,
@@ -131,19 +155,18 @@
         _this.changeDivHeight();
       };
       this.getList();
-    },
-    components:{
-      shopDetail
+      for (let i = 0; i <this.provinceAndCityData.length ; i++) {
+        delete this.provinceAndCityData[i].children
+      }
+      console.log(provinceAndCityData,'data')
     },
     updated() {
       this.changeDivHeight();
     },
     methods: {
       handleReset() {
-        this.listQuery={
-          page: 1,
-          limit:20,
-        }
+        this.listQuery={}
+        this.billDate=[]
         this.getList()
       },
       changeDivHeight() {
@@ -157,8 +180,8 @@
       getList() {
         this.listLoading = true;
         pages(this.listQuery).then(response => {
-          this.list = response.data;
-          this.total = response.data.length;
+          this.list = response.records;
+          this.total = response.total;
           this.listLoading = false;
         }).catch((error) => {
           console.log(error)
@@ -181,10 +204,6 @@
       },
 
       handleCreate(){
-        this.dataForm={
-          rule:['红包'],
-          tag:['券']
-        }
         this.showDialog=true
         this.dialogStatus='create'
       },
@@ -192,21 +211,23 @@
       /**
        * 设置排序&编辑推荐品牌对话框提交事件
        */
-      handleSubmit(status) {
-        this.$confirm('是否确认?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          this.isLoading=true
-          let message=status===2?"审核":"驳回"
-          auditStatus(this.selectedRows[0]?.id,status).then(res => {
-            if (Number(res.code) === 2000 || Number(res.code) === 200) {
-              this.showSuccess(message+'成功!')
-            } else {
-              this.showError(message+'失败,' + res.msg || res.data)
-            }
-          }, error => this.showError(message+'失败,' + error))
+      handleSubmit() {
+        this.$refs['dataForm'].validate((valid) => {
+          if (valid) {
+            this.isLoading=true
+            let params=JSON.parse(JSON.stringify(this.dataForm))
+            delete params.regionCodes
+            //判断当前为创建还是为编辑 并赋予相应的方法及提示信息
+            let method=this.dialogStatus==='create'?createObj:updateCoupon
+            let message=this.dialogStatus==='create'?"新建仓库辐射":"编辑仓库辐射"
+            method(params).then(res => {
+              if (Number(res.code) === 2000 || Number(res.code) === 200) {
+                this.showSuccess(message+'成功!')
+              } else {
+                this.showError(message+'失败,' + res.msg || res.data)
+              }
+            }, error => this.showError(message+'失败,' + error))
+          }
         })
       },
 
@@ -235,12 +256,22 @@
 
       handleSelectionChange(val){
         this.selectedRows=val
-        this.btnStatus.audit=val.length>1
+        this.btnStatus.edit=false
+        this.btnStatus.del=false
+        if(val.length>1){
+          this.btnStatus.edit=true
+        }
+        for (let i = 0; i <val.length ; i++) {
+          if(val[i].status===1){
+            this.btnStatus.del=true
+            this.btnStatus.edit=true
+            break
+          }
+        }
       },
 
       init(){
         this.showDialog=false
-        this.isShowShopDetail=false
         this.isLoading=false
         this.getList()
       },
@@ -263,11 +294,11 @@
         }).then(() => {
           deleteCoupon(ids.toString()).then((res) => {
             if (Number(res.code) === 200 || Number(res.code) === 2000) {
-              this.showSuccess('删除优惠券成功!')
+              this.showSuccess('删除成功!')
             } else {
-              this.showError('删除优惠券失败,'+res.msg||res.data)
+              this.showError('删除失败,'+res.msg||res.data)
             }
-          }, error => this.showError('删除优惠券失败,'+error));
+          }, error => this.showError('删除失败,'+error));
         });
       },
 
@@ -290,7 +321,7 @@
         }).then(() => {
           let params={
             id:row.id,
-            status:Number(row.status)===1?0:1
+            status:Number(row.status)
           }
           updateCouponStatus(params).then(response => {
             if (Number(response.code) === 2000||Number(response.code)===200) {
@@ -305,21 +336,42 @@
       },
 
       handleUpdate(){
-        this.dataForm=this.selectedRows[0]
-        this.dataForm.rule=['红包']
-        this.dataForm.tag=['券']
-        this.dataForm.activityTime=[this.dataForm.startTime,this.dataForm.endTime]
+        this.dataForm=Object.assign({},this.selectedRows[0])
+        // this.dataForm.city = CodeToText[this.dataForm.regionCodes[0]];
+        console.log(TextToCode[this.dataForm.city],'test')
+        this.dataForm.regionCodes = [TextToCode[this.dataForm.city].code];
         this.showDialog=true
         this.dialogStatus='update'
       },
 
-      showShopDetail(row){
-        // this.isShowShopDetail=true
-        // this.nowRow=row
-        this.$router.push({
-          path:'/shopkeeper/shopForm?id='+row.id
-        })
-      }
+      closeWarehouseDialog(list) {
+        this.warehouseVisible = false;
+        if (list.length > 0) {
+          this.dataForm.warehouseId = list[0].id;
+          this.$set(this.dataForm,'warehouseName',list[0].name)
+          // this.dataForm.warehouseName = list[0].name;
+          this.$refs.warehouse.reset();
+          this.$refs.dataForm.validateField('warehouseName');
+        }
+      },
+
+      handleCancelWarehouse() {
+        this.$refs.warehouse.reset();
+        this.warehouseVisible = false;
+      },
+
+      handleSubmitWarehouse() {
+        this.$refs.warehouse.onSubmit();
+      },
+
+      handleChange() {
+        // this.dataForm.province = CodeToText[this.dataForm.regionCodes[0]];
+        // this.dataForm.city = CodeToText[this.dataForm.regionCodes[1]];
+        // this.dataForm.county = CodeToText[this.dataForm.regionCodes[2]];
+        // this.dataForm.location = CodeToText[this.dataForm.regionCodes[0]] + '/' + CodeToText[this.dataForm.regionCodes[1]] + '/' + CodeToText[this.dataForm.regionCodes[2]];
+        this.dataForm.city = CodeToText[this.dataForm.regionCodes[0]];
+        console.log(this.dataForm.regionCodes)
+      },
     },
   }
 </script>
@@ -372,9 +424,4 @@
     margin:0;
     padding: 0;
   }
-</style>
-<style>
-  /*.el-table{*/
-  /*  overflow:visible !important;*/
-  /*}*/
 </style>

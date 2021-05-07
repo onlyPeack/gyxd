@@ -5,7 +5,7 @@ export function page(query) {
     query = Vue.prototype.filterObjSpace(query);
   }
   return request({
-    url: '/api/wms/warehouse/page',
+    url: '/api/mini/t-goods-warehouse-radiation/findWareHouse',
     method: 'get',
     params: query
   })

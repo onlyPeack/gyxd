@@ -72,8 +72,8 @@
         this.listLoading = true;
         page(this.listQuery)
           .then(response => {
-            this.list = response.data.records;
-            this.total = response.data.total;
+            this.list = response.data;
+            this.total = response.data.length;
             this.listLoading = false;
           }).catch(() => {
           this.listLoading = false;

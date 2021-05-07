@@ -41,10 +41,10 @@ export function putObj(id, obj) {
   })
 }
 
-const uploadPath = '/api/goods/storage/create';
+const uploadPath = '/api/mini/storage/create';
 export {uploadPath}
 
 
 export function downloadPath(url) {
-  return '/api/goods/storage/downloadFile?key=' + url.substring(url.lastIndexOf('/') + 1, url.length);
+  return '/api/mini/storage/downloadFile?key=' + url.substring(url.lastIndexOf('/') + 1, url.length);
 }

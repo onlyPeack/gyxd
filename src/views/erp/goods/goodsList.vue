@@ -43,12 +43,21 @@
               <a href="javascript:void(0)" @click="changeTreeNode(item,index)">{{item.label}}</a>
             </el-breadcrumb-item>
           </el-breadcrumb>
-          <el-input clearable class="filter-item" style="width: 200px;" placeholder="请输入商品编号"
-                    v-model="listQuery.goodsCode">
-          </el-input>
+<!--          <el-input clearable class="filter-item" style="width: 200px;" placeholder="请输入商品编号"-->
+<!--                    v-model="listQuery.goodsCode">-->
+<!--          </el-input>-->
           <el-input clearable class="filter-item" style="width: 200px;" placeholder="请输入商品名称" v-model="listQuery.name">
           </el-input>
           <el-input clearable class="filter-item" style="width: 200px;" placeholder="请输入品牌名称" v-model="listQuery.brandName">
+          </el-input>
+          <el-input clearable class="filter-item" style="width: 200px;" placeholder="请输入系列"
+                    v-model="listQuery.seriesName">
+          </el-input>
+          <el-input clearable class="filter-item" style="width: 200px;" placeholder="请输入规格型号"
+                    v-model="listQuery.specModel">
+          </el-input>
+          <el-input clearable class="filter-item" type="textarea" style="width: 280px;" placeholder="请输入订货号,多个订货号请输入回车键隔开"
+                    v-model="listQuery.itemNo">
           </el-input>
           <!--<el-select v-model="listQuery.brandId" placeholder="请输入品牌" clearable style="width: 200px;"-->
                      <!--class="filter-item" v-if="false">-->
@@ -56,7 +65,7 @@
                        <!--:value="item.value"></el-option>-->
           <!--</el-select>-->
           <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">搜索</el-button>
-          <el-button class="filter-item" type="primary" @click="openGoodsDialog" icon="el-icon-edit">添加</el-button>
+<!--          <el-button class="filter-item" type="primary" @click="openGoodsDialog" icon="el-icon-edit">添加</el-button>-->
           <el-button class="filter-item" type="primary" :loading="downloadLoading" icon="el-icon-download"
                      @click="handleDownload">导出
           </el-button>
@@ -82,37 +91,23 @@
           <el-button type="primary" icon="el-icon-download" class="filter-item" @click="dialogDataVisible">
             导入产品库数据
           </el-button>
-          <!--<span @click="queryVisibleChange" v-model="queryVisible" class="query-visible">-->
-          <!--<span v-show="!queryVisible">展开</span>-->
-          <!--<span v-show="queryVisible">收起</span>-->
-          <!--<i class="el-icon-arrow-down" v-show="!queryVisible"></i>-->
-          <!--<i class="el-icon-arrow-up" v-show="queryVisible"></i>-->
-          <!--</span>-->
-
-          <div style="padding-left: 128px;" v-show="queryVisible">
-            <el-input clearable class="filter-item" style="width: 200px;" placeholder="请输入系列"
-                      v-model="listQuery.seriesName">
-            </el-input>
-            <el-input clearable class="filter-item" style="width: 200px;" placeholder="请输入规格型号"
-                      v-model="listQuery.specModel">
-            </el-input>
-            <el-input clearable class="filter-item" type="textarea" style="width: 280px;" placeholder="请输入订货号,多个订货号请输入回车键隔开"
-                      v-model="listQuery.itemNo">
-            </el-input>
-            <el-select v-model="listQuery.isOnSale" placeholder="是否上架" clearable class="filter-item"
-                       style="width: 200px" @change="handleFilter">
-              <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value"/>
-            </el-select>
-            <el-button type="primary" icon="el-icon-upload2" class="filter-item" @click="groundingClick(0)">
-              批量上架
-            </el-button>
-            <el-button type="primary" icon="el-icon-download" class="filter-item" @click="groundingClick(1)">
-              批量下架
-            </el-button>
+<!--            <el-select v-model="listQuery.isOnSale" placeholder="是否上架" clearable class="filter-item"-->
+<!--                       style="width: 200px" @change="handleFilter">-->
+<!--              <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value"/>-->
+<!--            </el-select>-->
+<!--            <el-button type="primary" icon="el-icon-upload2" class="filter-item" @click="groundingClick(0)">-->
+<!--              批量上架-->
+<!--            </el-button>-->
+<!--            <el-button type="primary" icon="el-icon-download" class="filter-item" @click="groundingClick(1)">-->
+<!--              批量下架-->
+<!--            </el-button>-->
             <el-button type="primary" icon="el-icon-document" class="filter-item" @click="commodityClick()">
               贴标签
             </el-button>
-          </div>
+            <el-button type="primary" icon="el-icon-aim" class="filter-item" @click="batchPoints">
+              安全点数
+            </el-button>
+
 
         </div>
 
@@ -125,17 +120,17 @@
 
             <!--<el-table-column align="center" label="商品编码" prop="goodsCode" fixed="left">-->
             <!--</el-table-column>-->
-            <el-table-column type="selection" width="60">
+            <el-table-column type="selection" width="60" align="center">
             </el-table-column>
-            <el-table-column align="center" min-width="100" label="商品名称" prop="name" fixed="left">
+            <el-table-column min-width="100" label="商品名称" prop="name" fixed="left">
             </el-table-column>
-            <el-table-column align="center" min-width="100" label="品牌名称" prop="brandName" fixed="left">
+            <el-table-column min-width="100" label="品牌名称" prop="brandName" fixed="left">
             </el-table-column>
-            <el-table-column align="center" min-width="100" label="系列" prop="seriesName" fixed="left">
+            <el-table-column min-width="100" label="系列" prop="seriesName" fixed="left">
             </el-table-column>
-            <el-table-column align="center" min-width="100" label="规格型号" prop="specModel" fixed="left">
+            <el-table-column min-width="100" label="规格型号" prop="specModel" fixed="left">
             </el-table-column>
-            <el-table-column align="center" min-width="100" label="订货号" prop="itemNo">
+            <el-table-column min-width="100" label="订货号" prop="itemNo">
             </el-table-column>
             <el-table-column align="center" property="iconUrl" label="图片">
               <template slot-scope="scope">
@@ -163,6 +158,8 @@
 
             <el-table-column align="right" label="安全价格" prop="safePrice" min-width="90">
             </el-table-column>
+            <el-table-column align="right" label="安全点数" prop="safePoint" min-width="90">
+            </el-table-column>
 
             <!--<el-table-column align="right" label="预计采购价" prop="costPrice" min-width="90">-->
             <!--</el-table-column>-->
@@ -183,18 +180,18 @@
             <!--<el-table-column align="right" label="所属品牌ID" prop="brandId" min-width="100">-->
             <!--</el-table-column>-->
 
-            <el-table-column align="center" label="计量单位" prop="unit">
+            <el-table-column label="计量单位" prop="unit">
             </el-table-column>
-            <el-table-column align="center" label="上架状态" width="100">
-              <template slot-scope="scope">
-                <el-switch
-                  @change="handlePublishStatusChange(scope.$index, scope.row)"
-                  :active-value=0
-                  :inactive-value=1
-                  v-model="scope.row.isOnSale">
-                </el-switch>
-              </template>
-            </el-table-column>
+<!--            <el-table-column align="center" label="上架状态" width="100">-->
+<!--              <template slot-scope="scope">-->
+<!--                <el-switch-->
+<!--                  @change="handlePublishStatusChange(scope.$index, scope.row)"-->
+<!--                  :active-value=0-->
+<!--                  :inactive-value=1-->
+<!--                  v-model="scope.row.isOnSale">-->
+<!--                </el-switch>-->
+<!--              </template>-->
+<!--            </el-table-column>-->
             <el-table-column label="标签" width="140" align="center">
               <template slot-scope="scope">
                 <div v-if="scope.row.tags && scope.row.tags != ''">
@@ -250,7 +247,17 @@
         <el-button type="primary" @click="handleSubmitCommodity" :loading="isCommodity">确 定</el-button>
       </span>
     </el-dialog>
-
+    <el-dialog title="请设置安全点数" v-if="isAdjustPoints" :visible.sync="isAdjustPoints" append-to-body width="40%">
+      <el-form ref="dataForm" :model="dataForm" label-width="120px" label-position="right" :rules="rules">
+        <el-form-item label="安全点数：" prop="safePoint">
+          <el-input v-model="dataForm.safePoint" placeholder="请输入安全点数" style="width: 300px"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="isAdjustPoints=false">取 消</el-button>
+        <el-button type="primary" @click="doAdjustPoints" :loading="isLoading">确 定</el-button>
+      </span>
+    </el-dialog>
     <!--外部产品数据弹窗-->
     <cover-from-out v-if="dialogDataBaseVisible" :dialogDataBaseVisible="dialogDataBaseVisible"
                     @closeCoverDialog="closeCoverDialog"
@@ -269,7 +276,8 @@
     updateOnSaleStatus,
     updateIsNewStatus,
     updateIsHotStatus,
-    downTemplate
+    downTemplate,
+    updateBatch
   } from '@/api/erp/goods/goods';
   import {page as goodsTypePage} from '@/api/erp/goods/goodsType';
   import BackToTop from '@/components/BackToTop';
@@ -286,12 +294,14 @@
       return {
         headers: null,
         fromOut: '',
+        isAdjustPoints:false,
         selfCategoryId: undefined,
         clientHeight: 300,
         list: [],
         total: 0,
         isCommodity:false,
         listLoading: true,
+        isLoading:false,
         listQuery: {
           page: 1,
           limit: 10,
@@ -303,6 +313,9 @@
           specModel: undefined,
           seriesName: undefined,
           isOnSale: undefined
+        },
+        rules:{
+          safePoint: [{ required: true, message: '安全点数不能为空', trigger: 'blur' }]
         },
         productModeOptions: [{
           value: '0',
@@ -324,6 +337,7 @@
         goodsTypeList: [],
         fileList: [],
         goodsDetail: '',
+        dataForm:{},
         dialogCommodityVisible: false,
         detailDialogVisible: false,
         dialogFormVisible: false,
@@ -494,6 +508,9 @@
         this.clientHeight = (document.body.clientHeight - (190 + height)) * 1;
       },
       init() {
+        this.isAdjustPoints=false
+        this.isLoading=false
+        this.listLoading=false
         listCatAndBrand().then(response => {
           this.categoryList = response.data.categoryList;
           this.brandList = response.data.brandList;
@@ -590,89 +607,89 @@
         this.getList();
       },
       handleUpdate(index, row) {
-        if (row.isOnSale < 1) {
-          this.$confirm('该商品未下架不可编辑, 是否下架?', '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
-          }).then(() => {
-            updateOnSaleStatus(1, row.id).then(response => {
-              if (response.code == '2000') {
-                this.$notify({
-                  title: '成功',
-                  message: '更新成功',
-                  type: 'success',
-                  duration: 2000
-                });
-                this.getList()
-                this.goodsId = row.id;
-                this.goodsDialogTitle = '商品编辑';
-                this.dialogFormVisible = true;
-
-              } else {
-                this.$notify({
-                  title: '失败',
-                  message: response.msg,
-                  type: 'warning',
-                  duration: 2000
-                })
-              }
-            });
-          });
-        } else {
+        // if (row.isOnSale < 1) {
+        //   this.$confirm('该商品未下架不可编辑, 是否下架?', '提示', {
+        //     confirmButtonText: '确定',
+        //     cancelButtonText: '取消',
+        //     type: 'warning'
+        //   }).then(() => {
+        //     updateOnSaleStatus(1, row.id).then(response => {
+        //       if (response.code == '2000') {
+        //         this.$notify({
+        //           title: '成功',
+        //           message: '更新成功',
+        //           type: 'success',
+        //           duration: 2000
+        //         });
+        //         this.getList()
+        //         this.goodsId = row.id;
+        //         this.goodsDialogTitle = '商品编辑';
+        //         this.dialogFormVisible = true;
+        //
+        //       } else {
+        //         this.$notify({
+        //           title: '失败',
+        //           message: response.msg,
+        //           type: 'warning',
+        //           duration: 2000
+        //         })
+        //       }
+        //     });
+        //   });
+        // } else {
           this.goodsId = row.id;
           this.goodsDialogTitle = '商品编辑';
           this.dialogFormVisible = true;
-        }
+        // }
       },
       showDetail(detail) {
         this.goodsDetail = detail;
         this.detailDialogVisible = true;
       },
       handleDelete(index, row) {
-        if (row.isOnSale < 1) {
-          this.$confirm('该商品未下架不可删除, 是否下架?', '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
-          }).then(() => {
-            updateOnSaleStatus(1, row.id).then(response => {
-              if (response.code == '2000') {
-                this.$notify({
-                  title: '成功',
-                  message: '更新成功',
-                  type: 'success',
-                  duration: 2000
-                });
-                this.getList();
-                this.$confirm('此操作将永久删除, 是否继续?', '提示', {
-                  confirmButtonText: '确定',
-                  cancelButtonText: '取消',
-                  type: 'warning'
-                }).then(() => {
-                  delObj(row.id).then(() => {
-                    this.$notify({
-                      title: '成功',
-                      message: '删除成功',
-                      type: 'success',
-                      duration: 2000
-                    });
-                    const index = this.list.indexOf(row);
-                    this.list.splice(index, 1);
-                  });
-                });
-
-              } else {
-                this.$notify({
-                  title: '失败',
-                  message: response.msg,
-                  type: 'warning',
-                  duration: 2000
-                })
-              }
-            });
-          });
-        } else {
+        // if (row.isOnSale < 1) {
+        //   this.$confirm('该商品未下架不可删除, 是否下架?', '提示', {
+        //     confirmButtonText: '确定',
+        //     cancelButtonText: '取消',
+        //     type: 'warning'
+        //   }).then(() => {
+        //     updateOnSaleStatus(1, row.id).then(response => {
+        //       if (response.code == '2000') {
+        //         this.$notify({
+        //           title: '成功',
+        //           message: '更新成功',
+        //           type: 'success',
+        //           duration: 2000
+        //         });
+        //         this.getList();
+        //         this.$confirm('此操作将永久删除, 是否继续?', '提示', {
+        //           confirmButtonText: '确定',
+        //           cancelButtonText: '取消',
+        //           type: 'warning'
+        //         }).then(() => {
+        //           delObj(row.id).then(() => {
+        //             this.$notify({
+        //               title: '成功',
+        //               message: '删除成功',
+        //               type: 'success',
+        //               duration: 2000
+        //             });
+        //             const index = this.list.indexOf(row);
+        //             this.list.splice(index, 1);
+        //           });
+        //         });
+        //
+        //       } else {
+        //         this.$notify({
+        //           title: '失败',
+        //           message: response.msg,
+        //           type: 'warning',
+        //           duration: 2000
+        //         })
+        //       }
+        //     });
+        //   });
+        // } else {
           this.$confirm('此操作将永久删除, 是否继续?', '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
@@ -689,7 +706,7 @@
               this.list.splice(index, 1);
             });
           });
-        }
+        // }
 
       },
       // 文件上传
@@ -849,6 +866,35 @@
             })
           }
         });
+      },
+
+      batchPoints(){
+        if(this.selectedRows.length<1){
+          this.$message.warning('请选择要调整的商品!')
+          return false
+        }
+        this.isAdjustPoints=true
+      },
+
+      doAdjustPoints(){
+        this.$refs['dataForm'].validate((valid) => {
+          if (valid) {
+            this.isLoading=true
+            let arr=this.selectedRows
+            for (let i = 0; i <arr.length ; i++) {
+              arr[i].safePoint=Number(this.dataForm.safePoint)
+            }
+            updateBatch(arr).then(res=>{
+              if (res) {
+                this.$message.success('设置成功!')
+                this.init()
+              } else {
+                this.$message.error('设置失败,'+res.msg||res.data)
+              }
+            })
+          }
+        })
+
       }
     },
   }

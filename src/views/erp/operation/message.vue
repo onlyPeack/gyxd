@@ -1,28 +1,47 @@
 <template>
   <div class="app-container calendar-list-container sales-detail-list-container full-purchase bill-container">
+
     <!-- 查询和其他操作 -->
-    <div class="filter-container sales-detail-list-filter-container">
-      <div>
-        <el-input clearable class="filter-item" style="width: 200px;" placeholder="用户名"
-                  @keyup.enter.native="handleFilter" v-model="listQuery.memberName">
-        </el-input>
-        <el-date-picker
-          v-model="billDate"
-          type="daterange"
-          align="right"
-          unlink-panels
-          range-separator="至"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-          value-format="yyyy-MM-dd">
-        </el-date-picker>
-        <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">查询</el-button>
-        <el-button class="filter-item" type="warning" @click="handleReset" icon="el-icon-delete">重置</el-button>
-      </div>
+    <div class="filter-container sales-detail-list-filter-container message">
+      <el-form :inline="true">
+        <el-form-item>
+          <el-input clearable class="filter-item" style="width: 200px;vertical-align: super" placeholder="标题"
+                    @keyup.enter.native="handleFilter" v-model="listQuery.title">
+          </el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-select style="width: 200px;vertical-align: top" v-model="listQuery.msgType" placeholder="发布类型">
+            <el-option v-for="(key,value) in messageType" :value="value" :label="key"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item>
+          <el-date-picker
+            v-model="billDate"
+            type="daterange"
+            align="right"
+            unlink-panels
+            style="vertical-align: sub"
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            value-format="yyyy-MM-dd"> </el-date-picker>
+        </el-form-item>
+        <el-form-item>
+          <el-select style="width: 200px;vertical-align: top" v-model="listQuery.type" placeholder="发布对象">
+            <el-option v-for="(key,value) in messageTargetType" :value="value" :label="key"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item>
+          <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">查询</el-button>
+          <el-button class="filter-item" type="warning" @click="handleReset" icon="el-icon-delete">重置</el-button>
+        </el-form-item>
+      </el-form>
+
     </div>
     <div style="margin-top: 1px;">
-      <el-button type="text" icon="el-icon-plus">新增</el-button>
-      <el-button type="text" icon="el-icon-edit" @click="handleRowDelete">编辑</el-button>
+      <el-button type="text" icon="el-icon-plus" @click="handleCreate">新建</el-button>
+      <el-button type="text" icon="el-icon-edit" @click="handleUpdate" :disabled="btnStatus.edit">编辑</el-button>
+      <el-button type="text" icon="el-icon-delete" @click="handleRowDelete">删除</el-button>
     </div>
     <!-- 查询结果 -->
     <el-table size="small" :data="list" v-loading="listLoading" element-loading-text="正在查询中。。。" border fit
@@ -31,18 +50,16 @@
               :row-class-name="tableRowClassName">
       <el-table-column type="selection" align="center"></el-table-column>
       <el-table-column type="index" label="序号" align="center"></el-table-column>
-      <el-table-column label="用户名" prop="username" align="center"></el-table-column>
-      <el-table-column align="center" label="客户编号" prop="customer"></el-table-column>
-      <el-table-column align="center" label="店主" prop="umsMemberShop.storeName"></el-table-column>
-      <el-table-column align="center" label="店铺" prop="nickname"></el-table-column>
-      <el-table-column align="center" label="会员类型" prop="accoutType" v-slot="{row}">
-        <span>{{memberType[row.accoutType]}}</span>
+      <el-table-column label="消息标题" prop="title"></el-table-column>
+      <el-table-column label="消息类型" prop="msgType" v-slot="{row}">
+        <span>{{messageType[row.msgType]}}</span>
       </el-table-column>
-      <el-table-column align="center" label="企业抬头" prop="businessRise"></el-table-column>
-      <el-table-column align="center" label="行业" prop="job"></el-table-column>
-      <el-table-column align="center" label="客服"></el-table-column>
-      <el-table-column align="center" label="推荐人" prop="recommendName"></el-table-column>
-      <el-table-column align="center" label="注册时间" prop="createTime"></el-table-column>
+      <el-table-column label="发布对象" prop="type" v-slot="{row}">
+        <span>{{messageTargetType[row.type]}}</span>
+      </el-table-column>
+      <el-table-column label="发布内容" prop="content"></el-table-column>
+      <el-table-column label="描述" prop="description"></el-table-column>
+      <el-table-column label="发布时间" prop="releaseTime"></el-table-column>
     </el-table>
 
     <!-- 分页 -->
@@ -55,22 +72,38 @@
     </div>
 
 
-    <el-dialog modal-append-to-body append-to-body title="意见反馈" :visible.sync="isShowFeedbackDetail"
-               v-if="isShowFeedbackDetail" width="35%" top="5vh">
-      <el-form :model="dataForm" label-width="120px" label-position="right" style="width: 90%">
-        <el-form-item label="用户名：">
-          <el-input v-model="dataForm.memberName" disabled></el-input>
+    <el-dialog modal-append-to-body append-to-body :title="textMap[dialogStatus]" :visible.sync="isShowDialog"
+               v-if="isShowDialog" width="35%" top="15vh">
+      <el-form :model="dataForm" label-width="120px" label-position="right" style="width: 90%" :rules="rules"
+               ref="dataForm">
+        <el-form-item label="消息标题：" prop="title">
+          <el-input v-model="dataForm.title" placeholder="请输入标题"></el-input>
         </el-form-item>
-        <el-form-item label="反馈内容：">
-          <el-input v-model="dataForm.content" type="textarea" :rows="6" disabled></el-input>
+        <el-form-item label="描述：" prop="description">
+          <el-input v-model="dataForm.description" type="textarea" :rows="3"></el-input>
         </el-form-item>
-        <el-form-item label="批注：">
-          <el-input v-model="dataForm.note" type="textarea" :rows="6"></el-input>
+        <el-form-item label="指定发布时间：" prop="releaseTime">
+          <el-date-picker
+            v-model="dataForm.releaseTime"
+            type="datetime"
+            format="yyyy-MM-dd HH:mm:ss"
+            value-format="yyyy-MM-dd HH:mm:ss"
+            style="width: 100%"
+            placeholder="选择日期时间">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item label="发布对象：" prop="type">
+          <el-radio-group v-model="dataForm.type">
+            <el-radio :label="value" v-for="(key,value) in messageTargetType">{{key}}</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="发布内容：" prop="content">
+          <el-input v-model="dataForm.content" type="textarea" :rows="6"></el-input>
         </el-form-item>
       </el-form>
       <div style="height: 15px"></div>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="isShowFeedbackDetail=false" :loading="isLoading">取 消</el-button>
+        <el-button @click="isShowDialog=false" :loading="isLoading">取 消</el-button>
         <el-button type="primary" @click="handleSubmit" :loading="isLoading">确 认</el-button>
       </div>
     </el-dialog>
@@ -79,35 +112,40 @@
 </template>
 
 <script>
-  import { page as pages, updObj,deleteBatch } from '@/api/erp/member/memberList'
-  import { memberType } from './common/common'
+  import { selectPage as pages, updObj, deleteBatch, addObj } from '@/api/erp/operation/message'
+  import { messageType, messageTargetType } from './common/common'
 
   export default {
-    name: 'memberList',
+    name: 'message',
     data() {
       return {
         clientHeight: 300,
-        memberType,
+        messageType,
+        messageTargetType,
         list: undefined,
         total: undefined,
-        isShowFeedbackDetail: false,
+        isShowDialog: false,
         nowRow: {},
         listLoading: false,
         showDialog: false,
         dataForm: {},
         textMap: {//编辑&新建商品系列弹窗头部文字字典
-          update: '编辑优惠券',
-          create: '新增优惠券'
+          update: '编辑消息',
+          create: '新增消息'
         },
+        btnStatus: {
+          edit: false
+        },
+        dialogStatus: 'create',
         rules: {//新增&编辑赠品表单验证
-          'limitCollar': [{ required: true, message: '参与次数不能为空', trigger: 'blur' }],
-          'name': [{ required: true, message: '优惠券名称不能为空', trigger: 'blur' }],
+          'content': [{ required: true, message: '发布内容不能为空', trigger: 'blur' }],
+          'title': [{ required: true, message: '消息标题不能为空', trigger: 'blur' }],
           'stock': [
             { required: true, message: '赠品库存不能为空', trigger: 'blur' },
             { type: 'number', message: '赠品库存只能为数字', trigger: 'blur' }
           ],
-          'number': [{ required: true, message: '总张数不能为空', trigger: 'blur' }],
-          'activityTime': [{ required: true, message: '活动时间不能为空', trigger: 'blur' }],
+          'type': [{ required: true, message: '发布对象不能为空', trigger: 'blur' }],
+          'releaseTime': [{ required: true, message: '发布时间不能为空', trigger: 'blur' }],
           'status': [{ required: true, message: '启用状态不能为空', trigger: 'blur' }]
         },
         selectedRows: [],
@@ -142,7 +180,7 @@
           page: 1,
           limit: 20
         }
-        this.billDate=[]
+        this.billDate = []
         this.getList()
       },
       changeDivHeight() {
@@ -155,13 +193,13 @@
       },
       getList() {
         this.listLoading = true
-        if(this.billDate.length>0){
-          this.listQuery.start_time = this.billDate[0] + ' 00:00:00';
-          this.listQuery.end_time = this.billDate[1] + ' 23:59:59';
+        if (this.billDate.length > 0) {
+          this.listQuery.startTime = this.billDate[0] + ' 00:00:00'
+          this.listQuery.endTime = this.billDate[1] + ' 23:59:59'
         }
         pages(this.listQuery).then(response => {
-          this.list = response.records
-          this.total = response.total
+          this.list = response.data.records
+          this.total = response.data.total
           this.listLoading = false
         }).catch((error) => {
           console.log(error)
@@ -184,11 +222,7 @@
       },
 
       handleCreate() {
-        this.dataForm = {
-          rule: ['红包'],
-          tag: ['券']
-        }
-        this.showDialog = true
+        this.isShowDialog = true
         this.dialogStatus = 'create'
       },
 
@@ -196,14 +230,21 @@
        * 设置排序&编辑推荐品牌对话框提交事件
        */
       handleSubmit() {
-        this.isLoading = true
-        updObj(this.dataForm).then(res => {
-          if (Number(res.code) === 2000 || Number(res.code) === 200) {
-            this.showSuccess('操作成功!')
-          } else {
-            this.showError('操作失败,' + res.msg || res.data)
+        this.$refs['dataForm'].validate((valid) => {
+          if (valid) {
+            this.isLoading = true
+            let params = JSON.parse(JSON.stringify(this.dataForm))
+            //判断当前为创建还是为编辑 并赋予相应的方法及提示信息
+            let method = this.dialogStatus === 'create' ? addObj : updObj
+            method(params).then(res => {
+              if (Number(res.code) === 2000 || Number(res.code) === 200) {
+                this.showSuccess(this.textMap[this.dialogStatus] + '成功!')
+              } else {
+                this.showError(this.textMap[this.dialogStatus] + '失败,' + res.msg || res.data)
+              }
+            }, error => this.showError(this.textMap[this.dialogStatus] + '失败,' + error))
           }
-        }, error => this.showError('操作失败,' + error))
+        })
       },
 
       /**
@@ -231,12 +272,12 @@
 
       handleSelectionChange(val) {
         this.selectedRows = val
-        this.btnStatus.audit = val.length > 1
+        this.btnStatus.edit = val.length > 1
       },
 
       init() {
         this.showDialog = false
-        this.isShowFeedbackDetail = false
+        this.isShowDialog = false
         this.isLoading = false
         this.getList()
       },
@@ -259,26 +300,23 @@
         }).then(() => {
           deleteBatch(ids.toString()).then((res) => {
             if (Number(res.code) === 200 || Number(res.code) === 2000) {
-              this.showSuccess('删除意见反馈成功!')
+              this.showSuccess('删除消息成功!')
             } else {
-              this.showError('删除意见反馈失败,' + res.msg || res.data)
+              this.showError('删除消息失败,' + res.msg || res.data)
             }
-          }, error => this.showError('删除意见反馈失败,' + error))
+          }, error => this.showError('删除消息失败,' + error))
         })
       },
 
       handleUpdate() {
         this.dataForm = this.selectedRows[0]
-        this.dataForm.rule = ['红包']
-        this.dataForm.tag = ['券']
-        this.dataForm.activityTime = [this.dataForm.startTime, this.dataForm.endTime]
-        this.showDialog = true
+        this.isShowDialog = true
         this.dialogStatus = 'update'
       },
 
       showFeedbackDetail(row) {
-        this.isShowFeedbackDetail = true
-        this.dataForm = row
+        this.isShowDialog = true
+        this.dataForm = Object.assign({}, row)
       },
 
       tableRowClassName({ row, rowIndex }) {
@@ -347,5 +385,12 @@
   /*}*/
   .el-table .danger-row {
     background: #ffcece80;
+  }
+
+  .el-image-viewer__wrapper {
+    z-index: 2002 !important;
+  }
+  .message .el-form-item--mini.el-form-item{
+    margin-right: 0!important;
   }
 </style>

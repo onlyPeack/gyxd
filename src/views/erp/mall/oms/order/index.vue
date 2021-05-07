@@ -76,33 +76,32 @@
       </div>
     </div>
     <div class="filter-container">
-      <el-button type="text" v-if="choose != 'third'" icon="el-icon-upload2" :class="select===1?'selectActive':'select'"
-                 @click="handleSelect()">批量发货
+      <el-button type="text" v-if="choose == 'first'" icon="el-icon-upload2" @click="handlePush" :disabled="noPush">推送订单
       </el-button>
       <el-button type="text" v-if="choose == 'first'" icon="el-icon-circle-close"
                  :class="select===2?'selectActive':'select'"
-                 @click="handleClose()">关闭订单
+                 @click="handleClose">关闭订单
       </el-button>
-      <el-button type="text" v-if="choose != 'third'" icon="el-icon-edit" :class="select===3?'selectActive':'select'"
-                 @click="handleDelayed()">延时发货
-      </el-button>
-      <el-button type="text" icon="el-icon-download" v-if="choose == 'first'" :disabled="multipleSelection.length!==1"
-                 @click="downloadContract" style="margin-left: 10px;">下载合同
-      </el-button>
-      <el-upload
-        v-if="choose == 'first'"
-        class="upload-demo"
-        style="display: inline-block;margin-left: 10px;"
-        action="api/goods/storage/create"
-        accept=".pdf"
-        :disabled="multipleSelection.length!==1"
-        :before-upload="beforeAvatarUpload"
-        :on-success="handleSuccess"
-        :on-error="handleError"
-        :show-file-list="false">
-        <el-button type="text" icon="el-icon-upload" :disabled="multipleSelection.length!==1">上传合同
-        </el-button>
-      </el-upload>
+<!--      <el-button type="text" v-if="choose != 'third'" icon="el-icon-edit" :class="select===3?'selectActive':'select'"-->
+<!--                 @click="handleDelayed()">延时发货-->
+<!--      </el-button>-->
+<!--      <el-button type="text" icon="el-icon-download" v-if="choose == 'first'" :disabled="multipleSelection.length!==1"-->
+<!--                 @click="downloadContract" style="margin-left: 10px;">下载合同-->
+<!--      </el-button>-->
+<!--      <el-upload-->
+<!--        v-if="choose == 'first'"-->
+<!--        class="upload-demo"-->
+<!--        style="display: inline-block;margin-left: 10px;"-->
+<!--        action="api/goods/storage/create"-->
+<!--        accept=".pdf"-->
+<!--        :disabled="multipleSelection.length!==1"-->
+<!--        :before-upload="beforeAvatarUpload"-->
+<!--        :on-success="handleSuccess"-->
+<!--        :on-error="handleError"-->
+<!--        :show-file-list="false">-->
+<!--        <el-button type="text" icon="el-icon-upload" :disabled="multipleSelection.length!==1">上传合同-->
+<!--        </el-button>-->
+<!--      </el-upload>-->
       <el-button type="text" icon="el-icon-circle-check" v-if="choose == 'first'&&$store.getters.code==='00000'" :disabled="isForceBy"
                  @click="forceBy" style="margin-left: 10px;">强制审核
       </el-button>
@@ -132,6 +131,12 @@
                   :class="scope.row.status == 0 ? 'lightBlue orderStaus':scope.row.status == 7||scope.row.status==1||scope.row.status==11?'Blue orderStaus':scope.row.status == 4||scope.row.status==5?'gray orderStaus':scope.row.status == 6?'red orderStaus':scope.row.status == 8?'lineGreen orderStaus':scope.row.status == 2?'linesGreen orderStaus':scope.row.status == 3?'Green orderStaus':''">{{scope.row.status | formatStatus}}</span>
               </template>
             </el-table-column>
+            <el-table-column label="是否推送" prop="pushType" width="100" align="left" v-slot="{row}">
+              <span>{{pushType[row.pushType]}}</span>
+            </el-table-column>
+            <el-table-column label="店主是否审核" prop="isReview" width="100" align="left" v-slot="{row}">
+              <span>{{isReview[row.isReview]}}</span>
+            </el-table-column>
             <el-table-column label="订单编号" prop="orderSn" width="180" align="center" sortable>
               <template slot-scope="scope">
                 <div class="colum-orderSn" @click="handleViewOrder(scope.$index, scope.row)">{{scope.row.orderSn}}</div>
@@ -143,15 +148,16 @@
             <el-table-column label="客户名称" width="170" show-overflow-tooltip>
               <template slot-scope="scope">{{scope.row.customerName}}</template>
             </el-table-column>
-            <el-table-column label="客服账号" width="140">
-              <template slot-scope="scope">{{scope.row.crtUserNo}}/{{scope.row.salesmanName}}</template>
-            </el-table-column>
+<!--            <el-table-column label="客服账号" width="140">-->
+<!--              <template slot-scope="scope">{{scope.row.crtUserNo}}/{{scope.row.salesmanName}}</template>-->
+<!--            </el-table-column>-->
             <el-table-column label="订单来源" width="100" align="center">
               <template slot-scope="scope">
-                <span v-if="scope.row.orderType == 0">常规订单</span>
-                <span v-if="scope.row.orderType == 1">手工订单</span>
-                <span v-if="scope.row.orderType == 2">API订单</span>
-                <span v-if="scope.row.orderType == 3">小程序订单</span>
+<!--                <span v-if="scope.row.orderType == 0">常规订单</span>-->
+<!--                <span v-if="scope.row.orderType == 1">手工订单</span>-->
+<!--                <span v-if="scope.row.orderType == 2">API订单</span>-->
+<!--                <span v-if="scope.row.orderType == 3">小程序订单</span>-->
+                <span>优选订单</span>
               </template>
             </el-table-column>
             <!-- <el-table-column label="发货方式" width="100" align="center">
@@ -215,7 +221,7 @@
                            @click="doEntrustPay(scope.row.orderSn)">委托支付
                 </el-button>
                 <el-button @click="handleUpdateAuditStatusOrder(1, scope.row)" :loading="isFormLoading"
-                           v-if="scope.row.status != 4&&scope.row.status != 0 &&scope.row.auditStatus == 0">审核通过
+                           v-if="scope.row.status != 4&&scope.row.status != 0 &&scope.row.auditStatus == 0&&isReview[scope.row.isReview]==='已审核'">审核通过
                 </el-button>
               </template>
             </el-table-column>
@@ -260,9 +266,9 @@
             <el-table-column label="客户名称" width="240">
               <template slot-scope="scope">{{scope.row.customerName}}</template>
             </el-table-column>
-            <el-table-column label="客服账号" width="140">
-              <template slot-scope="scope">{{scope.row.crtUserNo}}/{{scope.row.salesmanName}}</template>
-            </el-table-column>
+<!--            <el-table-column label="客服账号" width="140">-->
+<!--              <template slot-scope="scope">{{scope.row.crtUserNo}}/{{scope.row.salesmanName}}</template>-->
+<!--            </el-table-column>-->
             <el-table-column label="订单金额" prop="totalAmount" width="120" align="right" class-name="col-required">
               <template slot-scope="scope" v-if="scope.row.totalAmount">￥{{scope.row.totalAmount.toFixed(4)}}</template>
             </el-table-column>
@@ -370,9 +376,9 @@
             <el-table-column label="客户名称" width="240">
               <template slot-scope="scope">{{scope.row.customerName}}</template>
             </el-table-column>
-            <el-table-column label="客服账号" width="140">
-              <template slot-scope="scope">{{scope.row.crtUserNo}}/{{scope.row.salesmanName}}</template>
-            </el-table-column>
+<!--            <el-table-column label="客服账号" width="140">-->
+<!--              <template slot-scope="scope">{{scope.row.crtUserNo}}/{{scope.row.salesmanName}}</template>-->
+<!--            </el-table-column>-->
             <el-table-column label="订单类型" width="80" align="center">
               <template slot-scope="scope">{{scope.row.orderType === 0 ? '正常订单' : scope.row.orderType ===1 ?
                 '秒杀订单': scope.row.orderType ===2?'期货订单':scope.row.orderType ===3 ?
@@ -659,7 +665,8 @@
     checkLogistics,
     upload,
     futuresLogistics,
-    auditOrderForce
+    auditOrderForce,
+    pushOrder
   } from '@/api/erp/mall/oms/order/order'
   import {selectPageByItem, selectPageByDetail} from '@/api/erp/mall/oms/order/orderSub'
   import {cancelFutureOrderPart, closeNowOrderSub, closeOrderFull} from '@/api/erp/mall/oms/order/order'
@@ -672,6 +679,7 @@
   import {getOrderSubDetail} from '@/api/erp/mall/oms/order/orderSub'
   import {delayedDeliver} from '@/api/erp/mall/oms/order/orderDelayed'
   import {getOrderSetting} from '@/api/erp/mall/oms/order/setting'
+  import {pushType,isReview} from '../../../../../dic'
 
   const defaultListQuery = {
     statusList: null,
@@ -707,6 +715,9 @@
       }
       return {
         orderSn: '',
+        pushType,
+        isReview,
+        noPush:false,
         isShowDelivery:false,
         dialogDetailVisible: false,
         closeType: false,
@@ -1332,6 +1343,15 @@
       },
       handleSelectionChange(val) {
         this.multipleSelection = val
+        this.noPush=false
+        if(this.choose==='first'){
+          for (let i = 0; i <val.length ; i++) {
+            if(val[i].isReview!==1||val[i].pushType===1){
+              this.noPush=true
+              break
+            }
+          }
+        }
         if (this.choose != 'third') {
           let ids = val.map((item) => {
             return item.orderSn
@@ -1346,6 +1366,7 @@
           })
           this.selIndex = arr
         }
+
       },
       handleTableRowStyle({row, rowIndex}) {
         if (row.orderType == 2) {
@@ -1380,9 +1401,9 @@
         this.detailSubDialogVisible = true
       },
       handleUpdateAuditStatusOrder(status, row) {
-        this.auditOrder.orderIds = [row.id]
+        this.auditOrder.orderId = [row.id]
         let params = new URLSearchParams();
-        params.append("orderIds", this.auditOrder.orderIds);
+        params.append("orderIds", this.auditOrder.orderId);
         params.append("status", status);
         this.isFormLoading = true;
         if (status === 1) {
@@ -2062,6 +2083,24 @@
               this.$message.error('强制审核失败!'+res.msg)
             }
           })
+        })
+      },
+
+      handlePush(){
+        let orderIds=[]
+        for (let i = 0; i <this.multipleSelection.length ; i++) {
+          orderIds.push(this.multipleSelection[i].id)
+        }
+        let params = new URLSearchParams()
+        params.append('orderIds', orderIds)
+        // params.append('note', this.closeOrder.note)
+        pushOrder(params).then(res=>{
+          if(Number(res.code)===2000||Number(res.code)===2000){
+            this.$message.success('推送订单成功!')
+            this.getList()
+          }else {
+            this.$message.success('推送订单失败!')
+          }
         })
       }
     }
