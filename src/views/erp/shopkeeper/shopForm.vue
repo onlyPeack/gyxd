@@ -106,7 +106,7 @@
           </div>
         </el-tab-pane>
         <el-tab-pane label="账户信息" name="2">
-          <h2>账户余额：{{balance.amount}}</h2>
+          <h2>账户余额：{{balance.availableAmount}}</h2>
           <el-button @click="showAccountMsg('account')">账户信息</el-button>
           <el-button v-if="shopType[shopData.type]==='企业'" @click="showAccountMsg('invoice')">开票信息</el-button>
           <h2>本期营业</h2>
@@ -157,9 +157,9 @@
 
 
         </el-tab-pane>
-        <el-tab-pane label="店铺商品" name="3">
+<!--        <el-tab-pane label="店铺商品" name="3">-->
 
-        </el-tab-pane>
+<!--        </el-tab-pane>-->
         <el-tab-pane label="团队店铺" name="4">
           <team-shop v-if="activeName==='4'" :id="id"></team-shop>
         </el-tab-pane>

@@ -30,7 +30,7 @@
     </div>
     <div style="margin-top: 1px;">
       <el-button type="text" icon="el-icon-plus" @click="handleCreate">新建</el-button>
-      <el-button type="text" icon="el-icon-edit" @click="handleEdit">编辑</el-button>
+      <el-button type="text" icon="el-icon-edit" @click="handleEdit" :disabled="isCanEdit">编辑</el-button>
       <el-button type="text" icon="el-icon-delete" @click="handleDelete">删除</el-button>
     </div>
     <el-tabs v-model="activeName" @tab-click="handleClick">
@@ -74,7 +74,7 @@
     </div>
 
 
-    <el-dialog title="所有商品" width="70%" v-if="productVisible" :visible.sync="productVisible" class="goodsDialog">
+    <el-dialog title="所有商品" width="65%" v-if="productVisible" :visible.sync="productVisible" class="goodsDialog">
       <goods-selector ref="goodsSelector" :isSingle="false" @closeGoodsDialog="closeGoodsDialog"
                       :isSelectPage="true"></goods-selector>
       <span slot="footer" class="dialog-footer">
@@ -111,7 +111,7 @@
 </template>
 
 <script>
-  import { selectPage as pages, insertBatch,deleteBatch } from '@/api/erp/shopkeeper/levelScheme'
+  import { selectPage as pages, insertBatch,deleteBatch,updateBatch } from '@/api/erp/shopkeeper/levelScheme'
   import { goodsType } from './common/common'
 
   export default {
@@ -138,7 +138,9 @@
         list:[],
         clientHeight: 300,
         total:0,
-        isEdit:false
+        isEdit:false,
+        isCanEdit:false,
+        selectedRows:[]
       }
     },
     created() {
@@ -198,13 +200,15 @@
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             let paramsArr = []
-            for (let i = 0; i < this.goodsListFromERP.length; i++) {
-              let params = this.goodsListFromERP[i]
+            let targetArr=this.isEdit?this.selectedRows:this.goodsListFromERP
+            for (let i = 0; i < targetArr.length; i++) {
+              let params = targetArr[i]
               params = Object.assign(params, this.dataForm)
               params.levelId = this.activeName
               paramsArr.push(params)
             }
-            insertBatch(paramsArr).then(res => {
+            let method=this.isEdit?updateBatch:insertBatch
+            method(paramsArr).then(res => {
               console.log(1234,res)
               if (res) {
                 this.$message.success('设置成功!')
@@ -234,12 +238,26 @@
       },
 
       handleSelectionChange(val){
+        this.isCanEdit=false
+        for (let i = 0; i <val.length ; i++) {
+          if(val[i].type!==val[0].type){
+            this.isCanEdit=true
+            break
+          }
+        }
         this.selectedRows=val
       },
 
       handleEdit(){
+        if(this.selectedRows.length<1){
+          this.$message.warning('请选择要编辑的商品!')
+          return false
+        }
         this.isBatchAdjustPrice=true
         this.isEdit=true
+        this.dataForm={
+          type:this.selectedRows[0].type
+        }
       },
 
       handleDelete(){
@@ -251,19 +269,22 @@
         this.selectedRows.forEach((row) => {
           ids.push(row.id)
         });
+        let that=this
         this.$confirm('此操作将永久删除, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
           deleteBatch(ids.toString()).then((res) => {
+            console.log(res,'resss')
             if (Number(res.code) === 200 || Number(res.code) === 2000) {
-              this.showSuccess('删除成功!')
-              this.init()
+              //this.showSuccess('删除成功!')
+              that.$message.success('删除成功!')
+              that.init()
             } else {
-              this.showError('删除失败,'+res.msg||res.data)
+              that.showError('删除失败,'+res.msg||res.data)
             }
-          }, error => this.showError('删除失败,'+error));
+          }, error => that.showError('删除失败,'+error));
         });
       },
 
@@ -302,4 +323,7 @@
   .futures-row{
     background-color: #3d96f342!important;
   }
+.goodsDialog>.el-dialog>.el-dialog__header{
+  z-index: 9999;
+}
 </style>

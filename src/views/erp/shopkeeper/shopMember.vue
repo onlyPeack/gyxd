@@ -1,12 +1,30 @@
 <template>
   <div>
+    <el-form :inline="true">
+      <el-form-item>
+        <el-input v-model="listQuery.username" placeholder="账号" style="width: 200px"></el-input>
+      </el-form-item>
+      <el-form-item>
+        <el-input placeholder="会员等级" style="width: 200px"></el-input>
+      </el-form-item>
+      <el-form-item>
+        <el-input placeholder="联系人" style="width: 200px"></el-input>
+      </el-form-item>
+      <el-form-item>
+        <el-input v-model="listQuery.mobile" placeholder="联系电话" style="width: 200px"></el-input>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" icon="el-icon-search" @click="handleFilter">搜索</el-button>
+        <el-button icon="el-icon-delete" @click="handleReset">重置</el-button>
+      </el-form-item>
+    </el-form>
     <!-- 查询结果 -->
     <el-table size="small" :data="list" v-loading="listLoading" element-loading-text="正在查询中。。。" border fit ref="analysisTable"
               highlight-current-row :height="600">
       <el-table-column type="index" label="序号" align="center"></el-table-column>
       <el-table-column label="账号" prop="username"></el-table-column>
       <el-table-column label="等级" prop="levelname"></el-table-column>
-      <el-table-column label="联系人" prop="amount"></el-table-column>
+      <el-table-column label="联系人" prop=""></el-table-column>
       <el-table-column label="联系电话" prop="mobile"></el-table-column>
       <el-table-column label="采购量" prop="sales"></el-table-column>
       <el-table-column label="注册时间" prop="createTime"></el-table-column>
@@ -62,7 +80,20 @@
 
           }
         })
-      }
+      },
+
+      handleReset() {
+        this.listQuery = {
+          page: 1,
+          limit: 20
+        }
+        this.getList()
+      },
+
+      handleFilter() {
+        this.listQuery.page = 1
+        this.getList()
+      },
     }
   }
 </script>

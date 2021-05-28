@@ -4,26 +4,27 @@
     <div class="filter-container sales-detail-list-filter-container">
       <div>
         <el-input clearable class="filter-item" style="width: 200px;" placeholder="用户名"
-                  @keyup.enter.native="handleFilter" v-model="listQuery.memberName">
+                  @keyup.enter.native="handleFilter" v-model="listQuery.username">
         </el-input>
-        <el-date-picker
-          v-model="billDate"
-          type="daterange"
-          align="right"
-          unlink-panels
-          range-separator="至"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-          value-format="yyyy-MM-dd">
-        </el-date-picker>
+        <el-input clearable class="filter-item" style="width: 200px;" placeholder="店铺"
+                  @keyup.enter.native="handleFilter" v-model="listQuery.storeName">
+        </el-input>
+<!--        <el-select v-model="listQuery.accountType" placeholder="会员类型" style="width: 200px;vertical-align: top">-->
+<!--          <el-option-->
+<!--            v-for="(key,value) in memberType"-->
+<!--            :key="value"-->
+<!--            :label="key"-->
+<!--            :value="value">-->
+<!--          </el-option>-->
+<!--        </el-select>-->
         <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">查询</el-button>
         <el-button class="filter-item" type="warning" @click="handleReset" icon="el-icon-delete">重置</el-button>
       </div>
     </div>
-    <div style="margin-top: 1px;">
-      <el-button type="text" icon="el-icon-plus">新增</el-button>
-      <el-button type="text" icon="el-icon-edit" @click="handleRowDelete">编辑</el-button>
-    </div>
+<!--    <div style="margin-top: 1px;">-->
+<!--      <el-button type="text" icon="el-icon-plus">新增</el-button>-->
+<!--      <el-button type="text" icon="el-icon-edit" @click="handleRowDelete">编辑</el-button>-->
+<!--    </div>-->
     <!-- 查询结果 -->
     <el-table size="small" :data="list" v-loading="listLoading" element-loading-text="正在查询中。。。" border fit
               ref="analysisTable"
@@ -31,18 +32,18 @@
               :row-class-name="tableRowClassName">
       <el-table-column type="selection" align="center"></el-table-column>
       <el-table-column type="index" label="序号" align="center"></el-table-column>
-      <el-table-column label="用户名" prop="username" align="center"></el-table-column>
-      <el-table-column align="center" label="客户编号" prop="customer"></el-table-column>
-      <el-table-column align="center" label="店主" prop="umsMemberShop.storeName"></el-table-column>
-      <el-table-column align="center" label="店铺" prop="nickname"></el-table-column>
-      <el-table-column align="center" label="会员类型" prop="accoutType" v-slot="{row}">
-        <span>{{memberType[row.accoutType]}}</span>
-      </el-table-column>
-      <el-table-column align="center" label="企业抬头" prop="businessRise"></el-table-column>
-      <el-table-column align="center" label="行业" prop="job"></el-table-column>
-      <el-table-column align="center" label="客服"></el-table-column>
-      <el-table-column align="center" label="推荐人" prop="recommendName"></el-table-column>
-      <el-table-column align="center" label="注册时间" prop="createTime"></el-table-column>
+      <el-table-column label="用户名" prop="username"></el-table-column>
+      <el-table-column label="客户编号" prop="customer"></el-table-column>
+      <el-table-column label="店铺" prop="umsMemberShop.storeName"></el-table-column>
+      <el-table-column label="店主" prop="nickname"></el-table-column>
+<!--      <el-table-column label="会员类型" prop="accountType" v-slot="{row}">-->
+<!--        <span>{{memberType[row.accountType]}}</span>-->
+<!--      </el-table-column>-->
+      <el-table-column label="企业抬头" prop="businessRise"></el-table-column>
+      <el-table-column label="行业" prop="job"></el-table-column>
+      <el-table-column label="客服"></el-table-column>
+      <el-table-column label="推荐人" prop="recommendName"></el-table-column>
+      <el-table-column label="注册时间" prop="createTime"></el-table-column>
     </el-table>
 
     <!-- 分页 -->

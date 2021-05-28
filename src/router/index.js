@@ -2097,6 +2097,18 @@ export const asyncRoutes = [
         component: resolve => require(['@/views/erp/shopkeeper/levelScheme'], resolve),
         authority: 'levelScheme'
       },
+      {
+        path: 'commission',
+        name: '提现申请',
+        component: resolve => require(['@/views/erp/shopkeeper/commission'], resolve),
+        authority: 'commission'
+      },
+      {
+        path: 'historyCommission',
+        name: '提现记录',
+        component: resolve => require(['@/views/erp/shopkeeper/historyCommission'], resolve),
+        authority: 'historyCommission'
+      },
     ]
   },
   /**************************************** 店主管理模块end ****************************************/

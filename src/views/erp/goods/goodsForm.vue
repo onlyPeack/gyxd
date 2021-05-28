@@ -12,7 +12,7 @@
           <tr>
             <td>
               <el-form-item label="商品名称:" prop="name" class="el-form-flex">
-                <el-input v-model="goods.name" disabled></el-input>
+                <el-input v-model="goods.name"></el-input>
               </el-form-item>
             </td>
             <!--<td>-->
@@ -22,7 +22,7 @@
             <!--</td>-->
             <td>
               <el-form-item label="商品标题:" prop="title" class="el-form-flex">
-                <el-input v-model="goods.title" disabled></el-input>
+                <el-input v-model="goods.title"></el-input>
               </el-form-item>
             </td>
           </tr>

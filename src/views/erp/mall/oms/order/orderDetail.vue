@@ -164,7 +164,7 @@
               </span>
             </el-col>
             <el-col :span="6" class="table-cell">
-              <span v-if="order.freightAmount">￥{{order.freightAmount.toFixed(2)}}</span>
+              <span>￥{{order.freightAmount.toFixed(2)}}</span>
             </el-col>
             <el-col :span="6" class="table-cell">
               <span class="color-danger" v-if="order.totalAmount">￥{{(order.totalAmount).toFixed(2)}}</span>
@@ -184,7 +184,7 @@
               <span v-if="order.promotionAmount">-￥{{order.promotionAmount.toFixed(2)}}</span>
             </el-col>
             <el-col :span="6" class="table-cell">
-              <span v-if="order.discountAmount">-￥{{order.discountAmount.toFixed(2)}}</span>
+              <span v-if="order.couponAmount">-￥{{order.couponAmount.toFixed(2)}}</span>
             </el-col>
             <el-col :span="6" class="table-cell">
               <span v-if="order.couponAmount">-￥{{order.couponAmount.toFixed(2)}}</span>
@@ -356,7 +356,7 @@
             <span v-if="order.promotionAmount">-￥{{order.promotionAmount.toFixed(2)}}</span>
           </el-col>
           <el-col :span="6" class="table-cell">
-            <el-input v-model.number="moneyInfo.discountAmount.toFixed(2)" size="mini">
+            <el-input v-model.number="moneyInfo.couponAmount.toFixed(2)" size="mini">
               <template slot="prepend">-￥</template>
             </el-input>
           </el-col>
@@ -364,7 +364,7 @@
             <span class="color-danger" v-if="order.totalAmount">￥{{order.totalAmount.toFixed(2)}}</span>
           </el-col>
           <el-col :span="6" class="table-cell">
-            <span class="color-danger">￥{{order.payAmount-moneyInfo.discountAmount.toFixed(2)}}</span>
+            <span class="color-danger">￥{{order.payAmount-moneyInfo.couponAmount.toFixed(2)}}</span>
           </el-col>
         </el-row>
       </div>
@@ -477,7 +477,7 @@
         receiverDialogVisible: false,
         receiverInfo: Object.assign({}, defaultReceiverInfo),
         moneyDialogVisible: false,
-        moneyInfo: {orderId: null, freightAmount: 0, discountAmount: 0, status: null},
+        moneyInfo: {orderId: null, freightAmount: 0, couponAmount: 0, status: null},
         messageDialogVisible: false,
         message: {title: null, content: null},
         closeDialogVisible: false,
@@ -697,7 +697,7 @@
         this.moneyDialogVisible = true;
         this.moneyInfo.orderId = this.order.id;
         this.moneyInfo.freightAmount = this.order.freightAmount;
-        this.moneyInfo.discountAmount = this.order.discountAmount;
+        this.moneyInfo.couponAmount = this.order.couponAmount;
         this.moneyInfo.status = this.order.status;
       },
       handleUpdateMoneyInfo() {

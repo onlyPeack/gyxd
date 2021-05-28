@@ -2,21 +2,14 @@
   <div class="app-container calendar-list-container sales-detail-list-container full-purchase bill-container">
 
     <!-- 查询和其他操作 -->
-    <div class="filter-container sales-detail-list-filter-container" v-if="false">
+    <div class="filter-container sales-detail-list-filter-container">
       <div>
-        <el-input clearable class="filter-item" style="width: 200px;" placeholder="优惠券名称"
-                  @keyup.enter.native="handleFilter" v-model="listQuery.name">
+        <el-input clearable class="filter-item" style="width: 200px;" placeholder="仓库"
+                  @keyup.enter.native="handleFilter" v-model="listQuery.warehouseName">
         </el-input>
-        <el-date-picker
-          v-model="billDate"
-          type="daterange"
-          align="right"
-          unlink-panels
-          range-separator="至"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-          value-format="yyyy-MM-dd">
-        </el-date-picker>
+        <el-input clearable class="filter-item" style="width: 200px;" placeholder="城市"
+                  @keyup.enter.native="handleFilter" v-model="listQuery.city">
+        </el-input>
         <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">查询</el-button>
         <el-button class="filter-item" type="warning" @click="handleReset" icon="el-icon-delete">重置</el-button>
       </div>
@@ -31,8 +24,9 @@
               highlight-current-row :height="clientHeight" @selection-change="handleSelectionChange">
       <el-table-column type="selection" align="center"></el-table-column>
       <el-table-column type="index" label="序号" align="center"></el-table-column>
-      <el-table-column align="center" label="配送城市" prop="city" sortable></el-table-column>
       <el-table-column label="仓库名称" prop="warehouseName" align="center"></el-table-column>
+      <el-table-column align="center" label="配送城市" prop="city" sortable></el-table-column>
+
 
 
     </el-table>
@@ -42,7 +36,7 @@
       <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange"
                      :current-page="listQuery.page"
                      :page-sizes="[10,20,30,50]" :page-size="listQuery.limit"
-                     layout="total" :total="total">
+                     layout="total, sizes, prev, pager, next, jumper" :total="total">
       </el-pagination>
     </div>
 
@@ -59,7 +53,7 @@
         </el-form-item>
         <el-form-item label="配送城市:" prop="regionCodes">
           <el-cascader
-            :options="provinceAndCityData"
+            :options="provinceAndCityDataPlus"
             :show-all-levels="false"
             style="width: 50%"
             v-model="dataForm.regionCodes"
@@ -89,7 +83,7 @@
 
 <script>
   import {createObj,page  as pages,updateCoupon,deleteCoupon,updateCouponStatus} from '@/api/erp/operation/t-goods-warehouse-radiation';
-  import {CodeToText,provinceAndCityData,TextToCode } from 'element-china-area-data'
+  import {CodeToText,provinceAndCityDataPlus,TextToCode } from 'element-china-area-data'
   // import {couponType,isExpired,defaultSendType} from './common/common'
 
   export default {
@@ -104,7 +98,7 @@
         total: undefined,
         listLoading: false,
         warehouseVisible:false,
-        provinceAndCityData,
+        provinceAndCityDataPlus,
         TextToCode,
         analysisIndex: 0,
         // couponType,
@@ -155,10 +149,11 @@
         _this.changeDivHeight();
       };
       this.getList();
-      for (let i = 0; i <this.provinceAndCityData.length ; i++) {
-        delete this.provinceAndCityData[i].children
+      for (let i = 0; i <this.provinceAndCityDataPlus.length ; i++) {
+        delete this.provinceAndCityDataPlus[i].children
       }
-      console.log(provinceAndCityData,'data')
+      // this.provinceAndCityData.unshift({value:'999999',label:'全国'})
+      // console.log(provinceAndCityData,'城市数据')
     },
     updated() {
       this.changeDivHeight();

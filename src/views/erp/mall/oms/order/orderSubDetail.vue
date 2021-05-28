@@ -41,7 +41,7 @@
 
           </el-row>
           <el-row>
-            <el-col :span="8" class="table-cell">{{order.deliveryWarehouse | ''}}</el-col>
+            <el-col :span="8" class="table-cell">{{order.deliveryWarehouse}}</el-col>
             <el-col :span="8" class="table-cell">{{order.deliveryCompany | formatNull}}</el-col>
             <el-col :span="8" class="table-cell">{{order.deliverySn | formatNull}}</el-col>
           </el-row>
@@ -152,7 +152,7 @@
           return value;
         }
       },
-      formatOrderType(value) { 
+      formatOrderType(value) {
         if (value === 1) {
           return '秒杀订单';
         } else {

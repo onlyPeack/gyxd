@@ -132,10 +132,8 @@
             </el-table-column>
             <el-table-column min-width="100" label="订货号" prop="itemNo">
             </el-table-column>
-            <el-table-column align="center" property="iconUrl" label="图片">
-              <template slot-scope="scope">
-                <img :src="scope.row.picUrl" width="40"/>
-              </template>
+            <el-table-column align="center" property="iconUrl" label="图片" v-slot="{row}" width="180">
+              <el-image :src="row.picUrl[0]" :previewSrcList="row.picUrl" style="width: 80px"></el-image>
             </el-table-column>
 
             <!--<el-table-column align="center" label="详情" prop="detail">-->
@@ -213,10 +211,10 @@
             <!--<el-table-column align="center" label="关键字" prop="keywords">-->
             <!--</el-table-column>-->
 
-            <el-table-column align="center" label="操作" width="180" fixed="right" class-name="small-padding fixed-width">
+            <el-table-column align="center" label="操作" fixed="right" class-name="small-padding fixed-width">
               <template slot-scope="scope">
                 <el-button type="primary" size="mini" @click="handleUpdate(scope.$index, scope.row)">编辑</el-button>
-                <el-button type="danger" size="mini" @click="handleDelete(scope.$index,scope.row)">删除</el-button>
+<!--                <el-button type="danger" size="mini" @click="handleDelete(scope.$index,scope.row)">删除</el-button>-->
               </template>
             </el-table-column>
           </el-table>
@@ -523,6 +521,7 @@
         this.listLoading = true;
         page(this.listQuery).then(response => {
           for(let i in response.data.records){
+            response.data.records[i].picUrl = response.data.records[i].picUrl?.split(',')||[];
             if(response.data.records[i].tags && response.data.records[i].tags!==''){
               response.data.records[i].tagsList = response.data.records[i].tags.split(',');
             }else{
@@ -531,10 +530,6 @@
           }
           this.list = response.data.records;
           this.total = response.data.total;
-          this.listLoading = false;
-        }).catch(() => {
-          this.list = [];
-          this.total = 0;
           this.listLoading = false;
         })
       },

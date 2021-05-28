@@ -2,7 +2,7 @@
   <div class="topbar-menu">
     <!--遍历当前路由-->
     <div class="topbar-menu-all" @click.stop="menuVisible">
-      <div class="topbar-menu-item" v-for="(item, index) in routes">
+      <div class="topbar-menu-item" v-for="(item, index) in routes" v-if="item.title==='工业小店'">
       <span class="top-menu" @click="handleMenuShow(index)" style="height: 49px;">
         <!--<svg-icon v-if='item.icon' :icon-class="item.icon"
                    style="width: 20px;height: 20px;vertical-align:middle;margin-right:6px">
@@ -15,7 +15,7 @@
 
         <div class="sub-menu" v-if="submenuVisibleList[index]">
           <div class="sub-menu-all">
-            <template v-for="child in item.children">
+            <template v-for="child in item.children" >
               <div class="sub-menu-item">
                 <div class="sub-menu-title">
                   <el-row>
@@ -23,7 +23,7 @@
                       <span class="sub-menu-child-title">{{child.title}}</span>
                     </el-col>
                   </el-row>
-                  <template v-for="childItem in child.children">
+                  <template v-for="childItem in child.children" v-if="childItem.title!=='店铺详情'">
                     <el-row :class="isNowRoute(childItem) ? 'nowRoute' : ''">
                       <el-col :span="24">
                         <!--<router-link :to="'/'+child.code+'/'+childItem.code" :key="childItem.name" v-if="childItem.title!='折扣设置'">

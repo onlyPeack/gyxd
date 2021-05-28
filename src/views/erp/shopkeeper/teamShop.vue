@@ -1,5 +1,30 @@
 <template>
     <div>
+      <el-form :inline="true">
+        <el-form-item>
+          <el-input v-model="listQuery.storeName" placeholder="店铺名称" style="width: 200px"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-select v-model="listQuery.levelId" placeholder="店铺等级" style="width: 200px">
+            <el-option
+              v-for="(key,value) in levelType"
+              :key="key"
+              :label="key"
+              :value="value">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item>
+          <el-input placeholder="联系人" style="width: 200px"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-input v-model="listQuery.mobile" placeholder="联系电话" style="width: 200px"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" icon="el-icon-search" @click="handleFilter">搜索</el-button>
+          <el-button icon="el-icon-delete" @click="handleReset">重置</el-button>
+        </el-form-item>
+      </el-form>
       <!-- 查询结果 -->
       <el-table size="small" :data="list" v-loading="listLoading" element-loading-text="正在查询中。。。" border fit ref="analysisTable"
                 highlight-current-row :height="600">
@@ -9,11 +34,13 @@
           <el-image :previewSrcList="[row.logo]" :src="row.logo" ></el-image>
         </el-table-column>
         <el-table-column label="店名" prop="storeName"></el-table-column>
-        <el-table-column label="等级" prop="storeName"></el-table-column>
-        <el-table-column label="联系人" prop="storeName"></el-table-column>
+        <el-table-column label="等级" prop="levelId" v-slot="{row}">
+          <span>{{levelType[row.levelId]}}</span>
+        </el-table-column>
+        <el-table-column label="联系人"></el-table-column>
         <el-table-column label="联系电话" prop="mobile"></el-table-column>
-        <el-table-column label="开店时间" prop="storeName"></el-table-column>
-        <el-table-column label="开店时长" prop="storeName"></el-table-column>
+        <el-table-column label="开店时间" ></el-table-column>
+        <el-table-column label="开店时长"></el-table-column>
         <el-table-column label="销量" prop="sales"></el-table-column>
         <el-table-column label="店铺类型" prop="type" v-slot="{row}">
           <span>{{shopType[row.type]}}</span>
@@ -33,7 +60,7 @@
 
 <script>
   import {selectTeamShopInfo} from '@/api/erp/shopkeeper/shopList';
-  import {shopType} from './common/common'
+  import {shopType,levelType} from './common/common'
   export default {
     name: 'teamShop',
     data(){
@@ -46,6 +73,7 @@
         },
         total:0,
         shopType,
+        levelType
       }
     },
     props:['id'],
@@ -69,7 +97,20 @@
             this.total=res.data.total
           }
         })
-      }
+      },
+
+      handleReset() {
+        this.listQuery = {
+          page: 1,
+          limit: 20
+        }
+        this.getList()
+      },
+
+      handleFilter() {
+        this.listQuery.page = 1
+        this.getList()
+      },
     }
   }
 </script>

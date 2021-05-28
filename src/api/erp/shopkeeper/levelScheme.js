@@ -19,6 +19,14 @@ export function insertBatch(data) {
   })
 }
 
+export function updateBatch(data) {
+  return request({
+    url: '/api/mini/t-core-goods-level-discount/updateBatch',
+    method: 'post',
+    data
+  })
+}
+
 export function deleteBatch(ids) {
   return request({
     url: '/api/mini/t-core-goods-level-discount/deleteBatch/'+ids,

@@ -42,9 +42,9 @@
                     placeholder="型号"></el-input>
           <el-button type="primary" icon="el-icon-search" size="mini" @click="handleSearchList()">查询</el-button>
           <el-button type="danger" icon="el-icon-refresh" size="mini" @click="restClick">重置</el-button>
-          <el-button type="warning" icon="el-icon-download" size="mini" @click="handleDownload()"
-                     :loading="downloadLoading">导出
-          </el-button>
+<!--          <el-button type="warning" icon="el-icon-download" size="mini" @click="handleDownload()"-->
+<!--                     :loading="downloadLoading">导出-->
+<!--          </el-button>-->
         </div>
 
         <div style="margin-top: 10px;">
@@ -78,16 +78,15 @@
     <div class="filter-container">
       <el-button type="text" v-if="choose == 'first'" icon="el-icon-upload2" @click="handlePush" :disabled="noPush">推送订单
       </el-button>
-      <el-button type="text" v-if="choose == 'first'" icon="el-icon-circle-close"
-                 :class="select===2?'selectActive':'select'"
+      <el-button type="text" v-if="choose == 'first'" icon="el-icon-circle-close" :disabled="noClose"
                  @click="handleClose">关闭订单
       </el-button>
 <!--      <el-button type="text" v-if="choose != 'third'" icon="el-icon-edit" :class="select===3?'selectActive':'select'"-->
 <!--                 @click="handleDelayed()">延时发货-->
 <!--      </el-button>-->
-<!--      <el-button type="text" icon="el-icon-download" v-if="choose == 'first'" :disabled="multipleSelection.length!==1"-->
-<!--                 @click="downloadContract" style="margin-left: 10px;">下载合同-->
-<!--      </el-button>-->
+      <el-button type="text" icon="el-icon-download" v-if="choose == 'first'" :disabled="multipleSelection.length!==1"
+                 @click="downloadContract" style="margin-left: 10px;">下载合同
+      </el-button>
 <!--      <el-upload-->
 <!--        v-if="choose == 'first'"-->
 <!--        class="upload-demo"-->
@@ -117,11 +116,7 @@
             <el-table-column type="selection" width="60" align="center"></el-table-column>
             <el-table-column label="审核状态" width="80" align="center">
               <template slot-scope="scope">
-
-                <el-tag
-                  :type="scope.row.auditStatus==1?'success':scope.row.auditStatus==2?'danger':scope.row.auditStatus==0?'warning':''"
-                  style="cursor: pointer;" @click="tagBtn(scope.row)"
-                  effect="plain">{{scope.row.auditStatus | formatAuditStatus}}
+                <el-tag :type="scope.row.auditStatus==1?'success':scope.row.auditStatus==2?'danger':scope.row.auditStatus==0?'warning':''" effect="plain">{{scope.row.auditStatus | formatAuditStatus}}
                 </el-tag>
               </template>
             </el-table-column>
@@ -135,7 +130,8 @@
               <span>{{pushType[row.pushType]}}</span>
             </el-table-column>
             <el-table-column label="店主是否审核" prop="isReview" width="100" align="left" v-slot="{row}">
-              <span>{{isReview[row.isReview]}}</span>
+              <span v-if="isReview[row.isReview]==='未审核'" style="color:#F56C6C;">{{isReview[row.isReview]}}</span>
+              <span v-else style="color:#67C23A">{{isReview[row.isReview]}}</span>
             </el-table-column>
             <el-table-column label="订单编号" prop="orderSn" width="180" align="center" sortable>
               <template slot-scope="scope">
@@ -191,22 +187,22 @@
                 </span>
               </template>
             </el-table-column>
-            <el-table-column label="委托状态" width="110" align="center">
-              <template slot-scope="scope">{{scope.row.entrustStatus == 0?'不需委托':scope.row.entrustStatus ==
-                1?'待委托支付':'委托支付完成'}}
-              </template>
-            </el-table-column>
-            <el-table-column label="代发货" width="60" align="center">
-              <template slot-scope="scope">{{scope.row.isReplaceDelivery === 0 ? '否' : '是'}}</template>
-            </el-table-column>
+<!--            <el-table-column label="委托状态" width="110" align="center">-->
+<!--              <template slot-scope="scope">{{scope.row.entrustStatus == 0?'不需委托':scope.row.entrustStatus ==-->
+<!--                1?'待委托支付':'委托支付完成'}}-->
+<!--              </template>-->
+<!--            </el-table-column>-->
+<!--            <el-table-column label="代发货" width="60" align="center">-->
+<!--              <template slot-scope="scope">{{scope.row.isReplaceDelivery === 0 ? '否' : '是'}}</template>-->
+<!--            </el-table-column>-->
             <el-table-column label="提交时间" width="160" prop="createTime" align="center" sortable>
               <template slot-scope="scope">{{scope.row.createTime | formatCreateTime}}</template>
             </el-table-column>
             <el-table-column label="审核时间" width="160" prop="modifyTime" align="center" sortable>
               <template slot-scope="scope">{{scope.row.modifyTime }}</template>
             </el-table-column>
-            <el-table-column label="优惠金额" width="120" prop="discountAmount" align="right" class-name="col-required">
-              <template slot-scope="scope" v-if="scope.row.discountAmount">￥{{scope.row.discountAmount.toFixed(4)}}
+            <el-table-column label="优惠金额" width="120" prop="couponAmount" align="right" class-name="col-required">
+              <template slot-scope="scope" v-if="scope.row.couponAmount">￥{{scope.row.couponAmount.toFixed(4)}}
               </template>
             </el-table-column>
             <el-table-column label="应付金额" width="120" prop="payAmount" align="right" class-name="col-required">
@@ -217,9 +213,9 @@
             </el-table-column>
             <el-table-column label="操作" width="180" align="center" fixed="right">
               <template slot-scope="scope">
-                <el-button v-if="scope.row.status == 0 && scope.row.entrustStatus == 1"
-                           @click="doEntrustPay(scope.row.orderSn)">委托支付
-                </el-button>
+<!--                <el-button v-if="scope.row.status == 0 && scope.row.entrustStatus == 1"-->
+<!--                           @click="doEntrustPay(scope.row.orderSn)">委托支付-->
+<!--                </el-button>-->
                 <el-button @click="handleUpdateAuditStatusOrder(1, scope.row)" :loading="isFormLoading"
                            v-if="scope.row.status != 4&&scope.row.status != 0 &&scope.row.auditStatus == 0&&isReview[scope.row.isReview]==='已审核'">审核通过
                 </el-button>
@@ -666,10 +662,11 @@
     upload,
     futuresLogistics,
     auditOrderForce,
-    pushOrder
+    pushOrder,
+    closeOrder
   } from '@/api/erp/mall/oms/order/order'
   import {selectPageByItem, selectPageByDetail} from '@/api/erp/mall/oms/order/orderSub'
-  import {cancelFutureOrderPart, closeNowOrderSub, closeOrderFull} from '@/api/erp/mall/oms/order/order'
+  import {cancelFutureOrderPart, closeNowOrderSub} from '@/api/erp/mall/oms/order/order'
   import {formatDate} from '@/utils/date'
   import OrderDetail from './orderDetail'
   import orderListView from './orderListView'
@@ -718,6 +715,7 @@
         pushType,
         isReview,
         noPush:false,
+        noClose:false,
         isShowDelivery:false,
         dialogDetailVisible: false,
         closeType: false,
@@ -963,6 +961,7 @@
         }
       },
       formatAuditStatus(value) {
+        value=Number(value)
         if (value === 0) {
           return '未审核'
         } else if (value === 1) {
@@ -1130,7 +1129,7 @@
         this.listQuery.endDate = val[1]
       },
       getSummaries(param) {
-        return this.getSummariesMethod(param, ['totalAmount', 'payAmount', 'discountAmount', 'paymentedAmount', 'unpaidAmount'])
+        return this.getSummariesMethod(param, ['totalAmount', 'payAmount', 'couponAmount', 'paymentedAmount', 'unpaidAmount'])
       },
       handleSelectionChangeRight(val) {
         this.multipleSelections = val
@@ -1344,6 +1343,13 @@
       handleSelectionChange(val) {
         this.multipleSelection = val
         this.noPush=false
+        this.noClose=false
+        if(val.length>1){
+          this.noClose=true
+        }
+        if(Number(val[0]?.auditStatus)!==0){
+          this.noClose=true
+        }
         if(this.choose==='first'){
           for (let i = 0; i <val.length ; i++) {
             if(val[i].isReview!==1||val[i].pushType===1){
@@ -1390,7 +1396,7 @@
         if (this.choose == 'first') {
           this.id = row.id
         } else {
-          this.id = row.masterOrderId
+          this.id = row.mainDTO.id
         }
 
         this.detailDialogVisible = true
@@ -1633,43 +1639,23 @@
             type: 'warning',
             duration: 1000
           })
-          return
-        } else {
-          let obj = []
-          let ids = []
-          //验证订单状态
-          let isVerify = true
-          this.multipleSelection.map((item, index) => {
-            obj.push(item.orderSn)
-            ids.push(item.id)
-            if (item.status !== 1 && item.status !== 7) {
-              isVerify = false
+          return false
+        }
+        this.$confirm('是否要进行关闭操作?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+
+          closeOrder({orderId:this.multipleSelection[0].id}).then(res=>{
+            if(Number(res.code)===2000||Number(res.code)===2000){
+              this.$message.success('关闭订单成功!')
+              this.handleSwitch()
+            }else{
+              this.$message.error('关闭订单失败!')
             }
           })
-          if (!isVerify) {
-            this.vueMessage('warning', '请选择为待发货或部分支付状态的订单!')
-            return
-          }
-
-          if (!!this.multipleSelection.some(item => {
-            return item.auditStatus == 3
-          })) {
-            let tempArr = this.multipleSelection.filter(item => {
-              return item.auditStatus == 3
-            })
-            let orderSnStr = []
-
-            tempArr.forEach(item => {
-              orderSnStr.push(item.orderSn)
-            })
-            this.vueMessage('warning', '订单' + orderSnStr.toString() + '正在审核中，请等待审核结束再关闭！')
-            return
-          }
-          // 选中的有待审核的不能关闭订单
-          this.closeOrder.dialogVisible = true
-          this.closeOrder.orderIds = ids
-          this.type = 1
-        }
+        })
       },
       handleDelayed() {
         if (this.multipleSelection.length == 1) {
@@ -1759,7 +1745,7 @@
         }
         if (this.type == 1) {
           let params = new URLSearchParams()
-          params.append('orderIds', this.closeOrder.orderIds)
+          params.append('orderId', this.closeOrder.orderIds)
           params.append('note', this.closeOrder.note)
           this.closeType = true
           closeOrderFull(params).then(response => {
@@ -1978,8 +1964,8 @@
         this.list = this.list == undefined || this.list == null ? [] : this.list
         this.downloadLoading = true
         import('@/vendor/Export2Excel').then(excel => {
-          const tHeader = ['订单标签', '审核', '订单状态', '客户编号', '订单编号', '发货方式', '订单金额', '优惠金额', '支付金额', '未支付金额', '代发货', '客服', '提交时间', '买家留言']
-          const filterVal = ['orderLabel', 'auditStatus', 'status', 'masterOrderSn', 'orderSn', 'sendType', 'totalAmount', 'discountAmount', 'paymentedAmount', 'unpaymentedAmount', 'replaceDelivery', 'salesmanName', 'createTime', 'note']
+          const tHeader = ['订单标签', '审核', '订单状态', '客户编号', '订单编号', '发货方式', '订单金额', '优惠金额', '支付金额', '未支付金额', '客服', '提交时间', '买家留言']
+          const filterVal = ['orderLabel', 'auditStatus', 'status', 'masterOrderSn', 'orderSn', 'sendType', 'totalAmount', 'discountAmount', 'paymentedAmount', 'unpaymentedAmount','salesmanName', 'createTime', 'note']
 
           const _this = this
 
@@ -2047,7 +2033,7 @@
         if (this.multipleSelection[0].contract && this.multipleSelection[0].contract !== '') {
           window.open(this.multipleSelection[0].contract)
         } else {
-          window.open('/api/mall/oms-order/download?id=' + this.multipleSelection[0].id)
+          window.open('/api/mini/order/download?id=' + this.multipleSelection[0].id)
         }
       },
 

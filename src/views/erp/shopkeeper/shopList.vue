@@ -5,11 +5,11 @@
     <div class="filter-container sales-detail-list-filter-container">
       <div>
         <el-input clearable class="filter-item" style="width: 200px;" placeholder="店铺名称"
-                  @keyup.enter.native="handleFilter" v-model="listQuery.name">
+                  @keyup.enter.native="handleFilter" v-model="listQuery.storeName">
         </el-input>
-        <el-input clearable class="filter-item" style="width: 200px;" placeholder="店铺等级"
-                  @keyup.enter.native="handleFilter" v-model="listQuery.shopLevel">
-        </el-input>
+<!--        <el-input clearable class="filter-item" style="width: 200px;" placeholder="店铺等级"-->
+<!--                  @keyup.enter.native="handleFilter" v-model="listQuery.shopLevel">-->
+<!--        </el-input>-->
         <el-input clearable class="filter-item" style="width: 200px;" placeholder="联系人"
                   @keyup.enter.native="handleFilter" v-model="listQuery.name">
         </el-input>

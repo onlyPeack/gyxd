@@ -37,22 +37,22 @@
               highlight-current-row :height="clientHeight" @selection-change="handleSelectionChange">
       <el-table-column type="selection" align="center"></el-table-column>
       <el-table-column type="index" label="序号" align="center"></el-table-column>
-      <el-table-column align="center" label="优惠券ID" prop="id" sortable width="100"></el-table-column>
-      <el-table-column label="优惠券名称" prop="name" align="center"></el-table-column>
-      <el-table-column align="center" label="优惠券类型" prop="type" v-slot="{row}">
+      <el-table-column label="优惠券ID" prop="id" sortable width="100"></el-table-column>
+      <el-table-column label="优惠券名称" prop="name" width="250"></el-table-column>
+      <el-table-column label="优惠券类型" prop="type" v-slot="{row}">
         <span>{{couponType[row.type]}}</span>
       </el-table-column>
-      <el-table-column align="center" label="面额" prop="discountAmount"></el-table-column>
-      <el-table-column align="center" label="默认发放张数" prop="number" sortable></el-table-column>
-      <el-table-column align="center" label="每人可领次数" prop="limitCollar" sortable></el-table-column>
-      <el-table-column align="center" label="已领取张数" prop="receive" sortable></el-table-column>
-      <el-table-column align="center" label="有效时间" width="250">
+      <el-table-column label="面额" prop="discountAmount" align="right"></el-table-column>
+<!--      <el-table-column align="center" label="默认发放张数" prop="number" sortable></el-table-column>-->
+      <el-table-column label="每人可领次数" prop="limitCollar" sortable align="right"></el-table-column>
+      <el-table-column label="已领取张数" prop="receive" sortable align="right"></el-table-column>
+      <el-table-column label="有效时间" width="250">
         <template slot-scope="scope" >
           <span>开始时间：{{scope.row.startTime}}</span><div></div>
           <span>结束时间：{{scope.row.endTime}}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="是否过期" prop="expired">
+      <el-table-column label="是否过期" prop="expired">
         <template slot-scope="scope" >
           <span style="color:#F56C6C;" v-if="new Date(scope.row.endTime)<new Date()">已过期</span>
           <span style="color:#67C23A" v-else>未过期</span>
@@ -69,14 +69,14 @@
             <el-switch :active-value="1" :inactive-value="0" v-model="scope.row.status" @change="handleUpdateStatus(scope.row)"></el-switch>
         </template>
       </el-table-column>
-      <el-table-column align="right" label="默认发放" prop="defaultSend">
-        <template slot-scope="scope" >
-          <span style="color:#F56C6C;" v-if="defaultSendType[scope.row.defaultSend]==='是'">是</span>
-          <span style="color:#67C23A" v-else>否</span>
-        </template>
-      </el-table-column>
-      <el-table-column align="right" label="创建人" prop="crtUserName"></el-table-column>
-      <el-table-column align="right" label="创建时间" prop="crtTime" sortable></el-table-column>
+<!--      <el-table-column align="right" label="默认发放" prop="defaultSend">-->
+<!--        <template slot-scope="scope" >-->
+<!--          <span style="color:#F56C6C;" v-if="defaultSendType[scope.row.defaultSend]==='是'">是</span>-->
+<!--          <span style="color:#67C23A" v-else>否</span>-->
+<!--        </template>-->
+<!--      </el-table-column>-->
+      <el-table-column label="创建人" prop="crtUserName"></el-table-column>
+      <el-table-column label="创建时间" prop="crtTime" sortable></el-table-column>
 
     </el-table>
 
@@ -106,9 +106,9 @@
           <span style="margin-right: 15px;margin-left: 15px;">元，才可以使用此券</span><div></div>
           <span>备注:代金券不兑现金，不设找零</span>
         </el-form-item>
-        <el-form-item label="默认发放张数:" prop="number">
-          <el-input v-model="dataForm.number" autocomplete="off"  placeholder="请输入优惠券数量" style="width: 50%"></el-input>
-        </el-form-item>
+<!--        <el-form-item label="默认发放张数:" prop="number">-->
+<!--          <el-input v-model="dataForm.number" autocomplete="off"  placeholder="请输入优惠券数量" style="width: 50%"></el-input>-->
+<!--        </el-form-item>-->
         <el-form-item label="每个会员id可领张数:" prop="limitCollar">
           <el-input v-model="dataForm.limitCollar" autocomplete="off"  placeholder="请输入领取张数" style="width: 50%"></el-input>
         </el-form-item>
@@ -128,11 +128,11 @@
         <!--                        <el-checkbox label="券" disabled></el-checkbox>-->
         <!--                    </el-checkbox-group>-->
         <!--                </el-form-item>-->
-        <el-form-item label="默认发放:" prop="defaultSend">
-          <el-radio-group v-model="dataForm.defaultSend">
-            <el-radio :label='value' v-for="(key,value) in defaultSendType">{{key}}</el-radio>
-          </el-radio-group>
-        </el-form-item>
+<!--        <el-form-item label="默认发放:" prop="defaultSend">-->
+<!--          <el-radio-group v-model="dataForm.defaultSend">-->
+<!--            <el-radio :label='value' v-for="(key,value) in defaultSendType">{{key}}</el-radio>-->
+<!--          </el-radio-group>-->
+<!--        </el-form-item>-->
         <el-form-item label="是否启用:" prop="status">
           <el-radio-group v-model="dataForm.status">
             <el-radio :label='0'>否</el-radio>

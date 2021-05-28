@@ -4,49 +4,47 @@
     <!-- 查询和其他操作 -->
     <div class="filter-container sales-detail-list-filter-container">
       <div>
+        <!--        <el-input clearable class="filter-item" style="width: 200px;" placeholder="id"-->
+        <!--                  @keyup.enter.native="handleFilter" v-model="listQuery.memberId">-->
+        <!--        </el-input>-->
         <el-input clearable class="filter-item" style="width: 200px;" placeholder="店铺名称"
                   @keyup.enter.native="handleFilter" v-model="listQuery.storeName">
-        </el-input>
-        <el-input clearable class="filter-item" style="width: 200px;" placeholder="店铺等级"
-                  @keyup.enter.native="handleFilter" v-model="listQuery.shopLevel">
-        </el-input>
-        <el-input clearable class="filter-item" style="width: 200px;" placeholder="联系人"
-                  @keyup.enter.native="handleFilter" v-model="listQuery.name">
-        </el-input>
-        <el-input clearable class="filter-item" style="width: 200px;" placeholder="联系电话"
-                  @keyup.enter.native="handleFilter" v-model="listQuery.phone">
         </el-input>
         <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">查询</el-button>
         <el-button class="filter-item" type="warning" @click="handleReset" icon="el-icon-delete">重置</el-button>
       </div>
     </div>
-    <div style="margin-top: 1px;">
-<!--      <el-button type="text" icon="el-icon-plus" @click="handleCreate">新建</el-button>-->
-      <el-button type="text" icon="el-icon-edit" @click="handleUpdate" :disabled="btnStatus.audit">审核</el-button>
-<!--      <el-button type="text" icon="el-icon-delete" @click="handleRowDelete" :disabled="btnStatus.del">删除</el-button>-->
-    </div>
+<!--    <div style="margin-top: 1px;">-->
+<!--      <el-button type="text" icon="el-icon-circle-check" @click="handleDone(1)" :disabled="selectedRows.length>1">完成</el-button>-->
+<!--      <el-button type="text" icon="el-icon-circle-close" @click="handleDone(2)" :disabled="selectedRows.length>1">驳回</el-button>-->
+<!--      <el-button type="text" icon="el-icon-edit-outline" @click="handleRowDelete" :disabled="selectedRows.length>1">备注</el-button>-->
+<!--    </div>-->
     <!-- 查询结果 -->
     <el-table size="small" :data="list" v-loading="listLoading" element-loading-text="正在查询中。。。" border fit ref="analysisTable"
               highlight-current-row  @selection-change="handleSelectionChange" :height="clientHeight">
       <el-table-column type="selection" align="center"></el-table-column>
       <el-table-column type="index" label="序号" align="center"></el-table-column>
-      <el-table-column align="center" label="店标" prop="logo" width="100" v-slot="{row}">
-        <el-image :previewSrcList="[row.logo]" :src="row.logo" >
-          <template slot="error">无</template>
-        </el-image>
+<!--      <el-table-column prop="type" label="类型" width="100" v-slot="{row}">-->
+<!--        <span>{{commissionType[row.type]}}</span>-->
+<!--      </el-table-column>-->
+      <el-table-column label="提现方式" prop="withdraw" v-slot="{row}">
+        <span>{{commissionWay[row.withdraw]}}</span>
       </el-table-column>
-      <el-table-column label="店名" prop="storeName" align="center" v-slot="{row}">
-        <el-link :underline="false" @click="showShopDetail(row)" type="primary">{{row.storeName}}</el-link>
+      <el-table-column label="银行卡号" prop="card"></el-table-column>
+<!--      <el-table-column label="处理进度" prop="schedule" v-slot="{row}">-->
+<!--        <span>{{commissionSchedule[row.schedule]}}</span>-->
+<!--      </el-table-column>-->
+      <!--      <el-table-column label="订单号" prop="orderSn"></el-table-column>-->
+      <el-table-column label="完成状态" prop="status" v-slot="{row}">
+        <span>{{commissionStatus[row.status]}}</span>
       </el-table-column>
-      <el-table-column align="center" label="联系人" prop="name"></el-table-column>
-      <el-table-column align="center" label="联系电话" prop="phone"></el-table-column>
-      <el-table-column align="center" label="开店时间" prop="crtTime"></el-table-column>
-      <el-table-column align="center" label="店铺类型" prop="type" v-slot="{row}">
-        <span>{{shopType[row.type]}}</span>
-      </el-table-column>
-      <el-table-column align="center" label="企业抬头" prop="businessRise"></el-table-column>
-      <el-table-column align="center" label="行业" prop="industryName"></el-table-column>
-      <el-table-column align="center" label="客服" prop="service"></el-table-column>
+      <el-table-column label="提现金额" prop="commission" align="right"></el-table-column>
+      <el-table-column label="用户名" prop="username"></el-table-column>
+      <el-table-column label="店铺名称" prop="storeName"></el-table-column>
+      <el-table-column label="创建时间" prop="crtTime"></el-table-column>
+      <el-table-column label="备注" prop="note"></el-table-column>
+<!--      <el-table-column label="开始金额" prop="beginMoney" align="right"></el-table-column>-->
+<!--      <el-table-column label="结束金额" prop="endMoney" align="right"></el-table-column>-->
 
     </el-table>
 
@@ -55,35 +53,30 @@
       <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange"
                      :current-page="listQuery.page"
                      :page-sizes="[10,20,30,50]" :page-size="listQuery.limit"
-                     layout="total" :total="total">
+                     layout="total, sizes, prev, pager, next, jumper" :total="total">
       </el-pagination>
     </div>
-    <el-dialog modal-append-to-body append-to-body title="店铺详情" :visible.sync="isShowShopDetail" v-if="isShowShopDetail" width="65%" top="5vh">
-      <shop-detail :id="nowRow.id"></shop-detail>
-      <div style="height: 15px"></div>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="isShowShopDetail=false" :loading="isLoading">取 消</el-button>
-        <el-button type="warning" @click="handleSubmit(1)" :loading="isLoading" v-if="!btnStatus.audit">驳 回</el-button>
-        <el-button type="primary" @click="handleSubmit(2)" :loading="isLoading" v-if="!btnStatus.audit">通 过</el-button>
-      </div>
-    </el-dialog>
 
   </div>
 </template>
 
 <script>
-  import {selectPage  as pages,auditStatus} from '@/api/erp/shopkeeper/checkPending';
-  import {shopType} from './common/common'
+  import {page  as pages,updObj} from '@/api/erp/shopkeeper/commission';
+  import {shopType,commissionType,commissionWay,commissionSchedule,commissionStatus} from './common/common'
   import shopDetail from './common/shopDetail'
 
   export default {
-    name: 'checkPending',
+    name: 'historyCommission',
     data() {
       return {
         clientHeight: 300,
         list: undefined,
         total: undefined,
         shopType,
+        commissionType,
+        commissionWay,
+        commissionSchedule,
+        commissionStatus,
         isShowShopDetail:false,
         nowRow:{},
         listLoading: false,
@@ -113,14 +106,9 @@
 
         billDate: [],
         listQuery: {
-          customerCode: undefined,
-          customerName: undefined,
-          userNo: undefined,
-          userName: undefined,
-          beginDate: undefined,
-          endDate: undefined,
           page: 1,
           limit:20,
+          // status:0
         }
       }
     },
@@ -155,10 +143,9 @@
       },
       getList() {
         this.listLoading = true;
-        this.listQuery.auditStatus=0
         pages(this.listQuery).then(response => {
-          this.list = response.data;
-          this.total = response.data.length;
+          this.list = response.records;
+          this.total = response.total;
           this.listLoading = false;
         }).catch((error) => {
           console.log(error)
@@ -180,13 +167,22 @@
         this.getList();
       },
 
-      handleCreate(){
-        this.dataForm={
-          rule:['红包'],
-          tag:['券']
-        }
-        this.showDialog=true
-        this.dialogStatus='create'
+      handleDone(flag){
+        this.$confirm('是否确认?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          let params=this.selectedRows[0]
+          params.status=flag
+          updObj(params).then(res => {
+            if (res) {
+              this.showSuccess('操作成功!')
+            } else {
+              this.showError('操作失败!,' + res.msg || res.data)
+            }
+          }, error => this.showError('操作失败!,' + error))
+        })
       },
 
       /**
@@ -306,13 +302,23 @@
 
       handleUpdate(){
         this.dataForm=this.selectedRows[0]
-        this.isShowShopDetail=true
+        this.dataForm.rule=['红包']
+        this.dataForm.tag=['券']
+        this.dataForm.activityTime=[this.dataForm.startTime,this.dataForm.endTime]
+        this.showDialog=true
         this.dialogStatus='update'
       },
 
       showShopDetail(row){
-        this.isShowShopDetail=true
-        this.nowRow=row
+        // this.isShowShopDetail=true
+        // this.nowRow=row
+        this.$router.push({
+          path:'/shopkeeper/shopForm?id='+row.id
+        })
+      },
+
+      handleCancel(){
+
       }
     },
   }

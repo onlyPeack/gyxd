@@ -42,13 +42,13 @@ export function updateOrderNote(obj) {
 }
 
 
-export function closeOrder(obj) {
-  return request({
-    url: '/api/mini/order/update/close',
-    method: 'post',
-    data: obj
-  })
-}
+// export function closeOrder(obj) {
+//   return request({
+//     url: '/api/mini/order/update/close',
+//     method: 'post',
+//     data: obj
+//   })
+// }
 
 export function deleteOrder(obj) {
   return request({
@@ -118,11 +118,11 @@ export function closeNowOrderSub(obj) {
   })
 }
 
-export function closeOrderFull(obj) {
+export function closeOrder(params) {
   return request({
-    url: '/api/mini/order/closeOrderFull',
-    method: 'post',
-    data: obj
+    url: '/api/mini/order-erp/cancelOrder',
+    method: 'get',
+    params
   })
 }
 

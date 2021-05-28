@@ -43,6 +43,10 @@
                 </el-input>
                 <el-input clearable class="filter-item" style="width: 200px;" placeholder="型号" v-model="listQuery.specModel">
                 </el-input>
+                <el-input clearable class="filter-item" style="width: 200px;" placeholder="品牌" v-model="listQuery.goodsBrand">
+                </el-input>
+                <el-input clearable class="filter-item" style="width: 200px;" placeholder="系列" v-model="listQuery.goodsSeries">
+                </el-input>
                 <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">搜索</el-button>
                 <el-button class="filter-item" icon="el-icon-refresh" @click="resetQuery">重置</el-button>
                 <el-button class="filter-item" type="success" icon="el-icon-plus" @click="handleCreate">添加商品</el-button>
@@ -56,14 +60,16 @@
                 <el-table-column align="center" label="商品编号" prop="goodsId" width="90"></el-table-column>
                 <el-table-column label="产品编号" prop="goodsCode" show-overflow-tooltip></el-table-column>
                 <el-table-column label="商品名称" prop="goodsName" show-overflow-tooltip></el-table-column>
+                <el-table-column label="品牌" prop="goodsBrand"></el-table-column>
+                <el-table-column label="系列" prop="goodsSeries" show-overflow-tooltip></el-table-column>
                 <el-table-column label="订货号" prop="itemNo"></el-table-column>
                 <el-table-column label="型号" prop="specModel"></el-table-column>
                 <el-table-column align="right" label="零售价" prop="retailPrice"></el-table-column>
                 <el-table-column align="right" label="订货价" prop="goodsPrice"></el-table-column>
                 <el-table-column align="center" label="图片" prop="url" width="180" v-slot="{row}">
-                  <el-image :src="row.url" :previewSrcList="[row.url]" style="width: 80px"></el-image>
+                  <el-image :src="row.url[0]" :previewSrcList="row.url" style="width: 80px"></el-image>
                 </el-table-column>
-                <el-table-column label="操作人" prop="crtUserName"></el-table-column>
+<!--                <el-table-column label="操作人" prop="crtUserName"></el-table-column>-->
                 <el-table-column label="创建时间" prop="crtTime" show-overflow-tooltip></el-table-column>
 
 <!--                <el-table-column align="center" label="操作" width="90" class-name="small-padding fixed-width">-->
@@ -287,6 +293,9 @@
         this.listLoading = true;
         page(this.listQuery).then(response => {
           this.list = response.data.records;
+          for (let i = 0; i <this.list.length ; i++) {
+            this.list[i].url=this.list[i].url.split(',')
+          }
           this.total = response.data.total;
           this.listLoading = false;
         }).catch(() => {
@@ -343,6 +352,8 @@
         delete this.listQuery.goodsName
         delete this.listQuery.itemNo
         delete this.listQuery.goodsId
+        delete this.listQuery.goodsBrand
+        delete this.listQuery.goodsSeries
         this.handleFilter()
       },
       handleCreate() {
@@ -355,6 +366,7 @@
           });
           return;
         }
+        console.log(this.$refs.documentTree.getCurrentNode().level,'level')
         if (this.$refs.documentTree.getCurrentNode().level != 2) {
           this.$notify({
             title: '只有分类可以添加商品！',
@@ -564,17 +576,31 @@
         this.listQuery.treeId = data.id;
         this.getList();
       },
-      renderContent(h, {node, data}) {
-        return (
-          < span class = "custom-tree-node" > < span > {node.label }< /span>
-        < span >
-        < el-button size = "mini" type = "text" icon = "el-icon-plus" on-click = {() => this.handleCreateTree(data) }> 添加下级 < /el-button>
-        < el-button size = "mini" type = "text" icon = "el-icon-edit" on-click = {() => this.handleUpdateTree(data) }> 修改 < /el-button>
-        < el-button size = "mini" type = "text" icon = "el-icon-delete" on-click = {() => this.handleDeleteTree(data.id) }> 删除 < /el-button>
-        < /span>
-        < /span>
+      renderContent(h, {node, data,store}) {
+        console.log('render',h,node,data,store)
+        if(Number(data.level)!==2){
+          return (
+            < span class = "custom-tree-node" > < span > {node.label }< /span>
+            < span >
+            < el-button size = "mini" type = "text" icon = "el-icon-plus"  on-click = {() => this.handleCreateTree(data) }> 添加下级 < /el-button>
+          < el-button size = "mini" type = "text" icon = "el-icon-edit" on-click = {() => this.handleUpdateTree(data) }> 修改 < /el-button>
+          < el-button size = "mini" type = "text" icon = "el-icon-delete" on-click = {() => this.handleDeleteTree(data.id) }> 删除 < /el-button>
+          < /span>
+          < /span>
 
-      )
+        )
+        }else{
+          return (
+            < span class = "custom-tree-node" > < span > {node.label }< /span>
+            < span >
+          < el-button size = "mini" type = "text" icon = "el-icon-edit" on-click = {() => this.handleUpdateTree(data) }> 修改 < /el-button>
+          < el-button size = "mini" type = "text" icon = "el-icon-delete" on-click = {() => this.handleDeleteTree(data.id) }> 删除 < /el-button>
+          < /span>
+          < /span>
+
+        )
+        }
+
       },
 
       //商品选择
