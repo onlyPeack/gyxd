@@ -58,7 +58,7 @@
           </tr>
           <tr>
             <td>
-              <el-form-item label="商品调拨折扣:" prop="customerDiscount" class="el-form-flex">
+              <el-form-item label="商品调拨折扣:" class="el-form-flex">
                 <el-input v-model="goods.customerDiscount" placeholder="0.00"
                           onKeyPress="if((event.keyCode<48 || event.keyCode>57) && event.keyCode!=46)event.returnValue=false"
                           @change="handlePriceInputChange($event,'customerDiscount')">

@@ -91,6 +91,9 @@
           <el-button type="primary" icon="el-icon-download" class="filter-item" @click="dialogDataVisible">
             导入产品库数据
           </el-button>
+          <el-button type="primary" icon="el-icon-refresh" class="filter-item" @click="syncGoods">
+            同步全部数据
+          </el-button>
 <!--            <el-select v-model="listQuery.isOnSale" placeholder="是否上架" clearable class="filter-item"-->
 <!--                       style="width: 200px" @change="handleFilter">-->
 <!--              <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value"/>-->
@@ -124,6 +127,8 @@
             </el-table-column>
             <el-table-column min-width="100" label="商品名称" prop="name" fixed="left">
             </el-table-column>
+            <el-table-column min-width="100" label="商品标题" prop="title" fixed="left">
+            </el-table-column>
             <el-table-column min-width="100" label="品牌名称" prop="brandName" fixed="left">
             </el-table-column>
             <el-table-column min-width="100" label="系列" prop="seriesName" fixed="left">
@@ -145,8 +150,8 @@
               <!--</template>-->
             <!--</el-table-column>-->
 
-            <el-table-column align="right" label="重量" prop="grossWeight">
-            </el-table-column>
+<!--            <el-table-column align="right" label="重量" prop="grossWeight">-->
+<!--            </el-table-column>-->
 
             <el-table-column align="right" label="产品面价" prop="retailPrice">
             </el-table-column>
@@ -275,7 +280,8 @@
     updateIsNewStatus,
     updateIsHotStatus,
     downTemplate,
-    updateBatch
+    updateBatch,
+    coverAllFromOut
   } from '@/api/erp/goods/goods';
   import {page as goodsTypePage} from '@/api/erp/goods/goodsType';
   import BackToTop from '@/components/BackToTop';
@@ -380,6 +386,15 @@
       }
     },
     methods: {
+      syncGoods(){
+        coverAllFromOut().then(res=>{
+          if(Number(res.code)===2000||Number(res.code)===200){
+            this.$message.success('同步成功!')
+          }else{
+            this.$message.error('同步失败!')
+          }
+        },error=>this.$message.error('同步失败!'))
+      },
       handleSubmitCommodity() {
         this.$refs.commodity.onSubmit();
       },
@@ -528,7 +543,28 @@
               response.data.records[i].tagsList = [];
             }
           }
-          this.list = response.data.records;
+          let list=response.data.records
+
+          if(this.listQuery.itemNo&&this.listQuery.itemNo!==''){
+            let queryArr=this.listQuery?.itemNo?.split('\n')
+            console.log(queryArr)
+            let clearArr=[]
+            for (let i = 0; i <queryArr.length ; i++) {
+              for (let j = 0; j <response.data.records.length ; j++) {
+                if(response.data.records[j].itemNo===queryArr[i]){
+                  clearArr.push(response.data.records[j])
+                  console.log(queryArr[i],list[j].itemNo,clearArr,response.data.records[i])
+                  break
+                }
+              }
+            }
+            this.list = clearArr
+            //console.log(this.list,clearArr)
+          }else{
+            this.list = list
+          }
+
+          //this.list = response.data.records;
           this.total = response.data.total;
           this.listLoading = false;
         })
@@ -892,6 +928,8 @@
 
       }
     },
+
+
   }
 </script>
 

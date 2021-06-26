@@ -127,7 +127,8 @@
               </template>
             </el-table-column>
             <el-table-column label="是否推送" prop="pushType" width="100" align="left" v-slot="{row}">
-              <span>{{pushType[row.pushType]}}</span>
+              <span v-if="pushType[row.pushType]==='否'" style="color:#F56C6C;">{{pushType[row.pushType]}}</span>
+              <span v-else style="color:#67C23A">{{pushType[row.pushType]}}</span>
             </el-table-column>
             <el-table-column label="店主是否审核" prop="isReview" width="100" align="left" v-slot="{row}">
               <span v-if="isReview[row.isReview]==='未审核'" style="color:#F56C6C;">{{isReview[row.isReview]}}</span>
@@ -1352,7 +1353,7 @@
         }
         if(this.choose==='first'){
           for (let i = 0; i <val.length ; i++) {
-            if(val[i].isReview!==1||val[i].pushType===1){
+            if(val[i].isReview!==1||val[i].pushType===1||Number(val[i].auditStatus)===0){
               this.noPush=true
               break
             }

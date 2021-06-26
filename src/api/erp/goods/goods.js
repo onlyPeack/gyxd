@@ -160,3 +160,10 @@ export function updateBatch(data) {
     data
   })
 }
+
+export function coverAllFromOut() {
+  return request({
+    url: 'api/mini/goods/coverAllFromOut',
+    method: 'get',
+  })
+}

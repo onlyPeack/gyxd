@@ -33,3 +33,11 @@ export function deleteBatch(ids) {
     method: 'get',
   })
 }
+
+export function saveOrUpdateBatch(data) {
+  return request({
+    url: '/api/mini/t-core-goods-level-discount/saveOrUpdateBatch',
+    method: 'post',
+    data
+  })
+}

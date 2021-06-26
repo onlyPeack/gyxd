@@ -9,6 +9,16 @@
         <el-input clearable class="filter-item" style="width: 200px;" placeholder="店铺"
                   @keyup.enter.native="handleFilter" v-model="listQuery.storeName">
         </el-input>
+        <el-input clearable class="filter-item" style="width: 200px;" placeholder="客户编号"
+                  @keyup.enter.native="handleFilter" v-model="listQuery.customer">
+        </el-input>
+
+        <el-input clearable class="filter-item" style="width: 200px;" placeholder="推荐人"
+                  @keyup.enter.native="handleFilter" v-model="listQuery.recommendCode">
+        </el-input>
+        <el-input clearable class="filter-item" style="width: 200px;" placeholder="推荐人手机号"
+                  @keyup.enter.native="handleFilter" v-model="listQuery.recommendMobile">
+        </el-input>
 <!--        <el-select v-model="listQuery.accountType" placeholder="会员类型" style="width: 200px;vertical-align: top">-->
 <!--          <el-option-->
 <!--            v-for="(key,value) in memberType"-->
@@ -32,17 +42,19 @@
               :row-class-name="tableRowClassName">
       <el-table-column type="selection" align="center"></el-table-column>
       <el-table-column type="index" label="序号" align="center"></el-table-column>
-      <el-table-column label="用户名" prop="username"></el-table-column>
       <el-table-column label="客户编号" prop="customer"></el-table-column>
+      <el-table-column label="用户名" prop="username"></el-table-column>
+
       <el-table-column label="店铺" prop="umsMemberShop.storeName"></el-table-column>
-      <el-table-column label="店主" prop="nickname"></el-table-column>
+<!--      <el-table-column label="店主" prop="nickname"></el-table-column>-->
 <!--      <el-table-column label="会员类型" prop="accountType" v-slot="{row}">-->
 <!--        <span>{{memberType[row.accountType]}}</span>-->
 <!--      </el-table-column>-->
-      <el-table-column label="企业抬头" prop="businessRise"></el-table-column>
+      <el-table-column label="企业抬头" prop="invoice"></el-table-column>
       <el-table-column label="行业" prop="job"></el-table-column>
-      <el-table-column label="客服"></el-table-column>
-      <el-table-column label="推荐人" prop="recommendName"></el-table-column>
+      <el-table-column label="客服" prop="umsMemberShop.serviceName"></el-table-column>
+      <el-table-column label="推荐人" prop="recommendCode"></el-table-column>
+      <el-table-column label="推荐人手机号" prop="recommendMobile"></el-table-column>
       <el-table-column label="注册时间" prop="createTime"></el-table-column>
     </el-table>
 
@@ -51,7 +63,7 @@
       <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange"
                      :current-page="listQuery.page"
                      :page-sizes="[10,20,30,50]" :page-size="listQuery.limit"
-                     layout="total" :total="total">
+                     layout="total, sizes, prev, pager, next, jumper" :total="total">
       </el-pagination>
     </div>
 

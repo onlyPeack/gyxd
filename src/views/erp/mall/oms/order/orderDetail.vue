@@ -102,8 +102,8 @@
             <el-col :span="4" class="table-cell">{{orderSub.deliverySn}}</el-col>
           </el-row>
 
-          <el-table ref="orderItemTable" :data="orderSub.orderItemList"
-                    style="width: 100%;margin-top: 20px" border v-if="orderSub.orderItemList">
+          <el-table ref="orderItemTable" :data="orderSub.omsOrderItemList"
+                    style="width: 100%;margin-top: 20px" border v-if="orderSub.omsOrderItemList">
             <el-table-column label="商品图片" width="120" align="center">
               <template slot-scope="scope">
                 <img :src="scope.row.productPic" style="height: 80px">
@@ -160,7 +160,7 @@
           <el-row>
             <el-col :span="6" class="table-cell">
               <span v-if="order.totalAmount">
-                ￥{{(order.totalAmount>3000?order.totalAmount:order.totalAmount-order.freightAmount).toFixed(2)}}
+                ￥{{(order.distributionMode===1?order.totalAmount:order.totalAmount-order.freightAmount).toFixed(2)}}
               </span>
             </el-col>
             <el-col :span="6" class="table-cell">

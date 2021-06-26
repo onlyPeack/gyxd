@@ -16,8 +16,8 @@ export const shopSource={
 
 export const goodsType={
   0:'现货',
-  1:'调拨',
-  2:'期货'
+  2:'调拨',
+  1:'期货'
 }
 
 export const levelType={

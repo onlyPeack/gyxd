@@ -14,7 +14,7 @@
             <div style="margin-top: 10px">
               <el-row>
                 <el-col>
-                  <el-tree class="filter-tree" :data="treeData" node-key="id" highlight-current :props="defaultProps"
+                  <el-tree class="filter-tree" :data="treeData" node-key="id" highlight-current :props="defaultProps" :default-expand-all="true"
                            :expand-on-click-node="false" :filter-node-method="filterNode" ref="documentTree"
                            @node-click="getNodeData"
                            :render-content="renderContent">
@@ -130,7 +130,7 @@
 
 
               <!-- 添加或修改分类对话框 -->
-              <el-dialog :title="textMap[dialogStatusTree]" :visible.sync="dialogFormVisibleTree" width="40%">
+              <el-dialog :title="textMap[dialogStatusTree]" :visible.sync="dialogFormVisibleTree" width="40%" v-if="dialogFormVisibleTree">
                 <el-form :rules="rulesTree" ref="dataTreeForm" :model="dataTreeForm" status-icon label-position="right"
                          label-width="200px">
                   <el-form-item label="ID" prop="id" v-show="false">
@@ -152,14 +152,15 @@
                       </el-option>
                     </el-select>
                   </el-form-item>
-<!--                  <el-form-item label="图片" prop="url" v-if="dataTreeForm.level=='1'">-->
-<!--                    <el-upload class="avatar-uploader" :action='uploadPath' list-type="picture-card"-->
-<!--                               :show-file-list="false"-->
-<!--                               accept=".jpg,.jpeg,.png,.gif" :on-success="uploadPicUrl">-->
-<!--                      <img v-if="dataTreeForm.url && dataTreeForm.url!=''" :src="dataTreeForm.url" class="avatar" style="width: auto;height: 148px;">-->
-<!--                      <i v-else class="el-icon-plus avatar-uploader-icon"></i>-->
-<!--                    </el-upload>-->
-<!--                  </el-form-item>-->
+                  <el-form-item label="图片">
+                    <el-upload class="avatar-uploader" :action='uploadPath' list-type="picture-card"
+                               :show-file-list="false"
+                               accept=".jpg,.jpeg,.png,.gif" :on-success="uploadPicUrl">
+                      <el-image v-if="dataTreeForm.url && dataTreeForm.url!=''" :src="dataTreeForm.url" class="avatar" style="width: auto;height: 148px;">
+                      </el-image>
+                      <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                    </el-upload>
+                  </el-form-item>
                   <el-form-item label="排序" prop="sort">
                     <el-input v-model="dataTreeForm.sort" style="width: 300px"></el-input>
                   </el-form-item>
@@ -217,6 +218,7 @@
         list: undefined,
         total: undefined,
         listLoading: true,
+        picUrl:'',
         listQuery: {
           page: 1,
           limit: 10,
@@ -291,6 +293,7 @@
     methods: {
       getList() {
         this.listLoading = true;
+        this.listQuery.selectType=4
         page(this.listQuery).then(response => {
           this.list = response.data.records;
           for (let i = 0; i <this.list.length ; i++) {
@@ -488,15 +491,19 @@
           }
         });
       },
-      uploadPicUrl: function (response) {
-        this.$nextTick(() => {
-          this.dataTreeForm.url = response.data.url;
-          this.vueSet(this.dataTreeForm, 'url', response.data.url);
-        });
+      uploadPicUrl(response) {
+          //this.dataTreeForm.url = response.data.url;
+        this.$set(this.dataTreeForm, 'url', response.data.url)
+        //this.picUrl=response.data.url
+        this.$nextTick(()=>{
+          console.log(this.dataTreeForm,'测试参数')
+          this.$refs['dataTreeForm'].validateField('url')
+        })
+
       },
       handleUpdateTree(data) {
         this.dataTreeForm = Object.assign({}, data);
-        this.dataTreeForm.url = this.dataTreeForm.url ? this.dataTreeForm.url : undefined;
+        // this.dataTreeForm.url = this.dataTreeForm.url ? this.dataTreeForm.url : undefined;
         this.dialogStatusTree = 'update';
         this.dialogFormVisibleTree = true;
         this.$nextTick(() => {
@@ -504,6 +511,7 @@
         })
       },
       updateTreeData() {
+        console.log('执行了更新树')
         this.$refs['dataTreeForm'].validate((valid) => {
           if (valid) {
             putTreeObj(this.dataTreeForm.id, this.dataTreeForm).then(response => {

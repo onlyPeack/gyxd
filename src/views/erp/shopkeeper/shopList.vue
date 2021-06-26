@@ -40,13 +40,13 @@
 <!--      <el-table-column align="center" label="用户名" prop="nickName"></el-table-column>-->
       <el-table-column label="联系人" prop="name"></el-table-column>
       <el-table-column label="联系电话" prop="phone"></el-table-column>
-      <el-table-column label="开店时间" prop="crtTime"></el-table-column>
-      <el-table-column label="店铺类型" prop="type" v-slot="{row}">
-        <span>{{shopType[row.type]}}</span>
-      </el-table-column>
-      <el-table-column label="企业抬头" prop="businessRise"></el-table-column>
-      <el-table-column label="行业" prop="industryName"></el-table-column>
-      <el-table-column label="客服" prop="serviceName"></el-table-column>
+      <el-table-column label="开店时间" prop="crtTime" sortable></el-table-column>
+<!--      <el-table-column label="店铺类型" prop="type" v-slot="{row}">-->
+<!--        <span>{{shopType[row.type]}}</span>-->
+<!--      </el-table-column>-->
+      <el-table-column label="企业抬头" prop="invoice"></el-table-column>
+<!--      <el-table-column label="行业" prop="industryName"></el-table-column>-->
+      <el-table-column label="客服" prop="umsMemberShop.serviceName"></el-table-column>
       <el-table-column label="推荐人" prop="recommend"></el-table-column>
 
     </el-table>
@@ -157,8 +157,8 @@
       getList() {
         this.listLoading = true;
         pages(this.listQuery).then(response => {
-          this.list = response.data;
-          this.total = response.data.length;
+          this.list = response.data.records;
+          this.total = response.data.total;
           this.listLoading = false;
         }).catch((error) => {
           console.log(error)

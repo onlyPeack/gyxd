@@ -31,11 +31,11 @@
           <!--<el-input clearable class="filter-item" style="width: 190px;" placeholder="订货号"-->
                     <!--@keyup.enter.native="handleFilter" v-model="listQuery.itemNo">-->
           <!--</el-input>-->
-          <el-input  class="filter-item" style="width: 190px;margin-right:5px;" placeholder="请输入订货号,多个订货号用空格隔开"
+          <el-input  class="filter-item" style="width: 190px;margin-right:5px;" placeholder="请输入订货号,多个订货号用回车隔开"
                      v-model="listQuery.itemNo" type="textarea" clearable>
           </el-input>
           <el-input  class="filter-item" style="width: 190px;margin-right:5px;" placeholder="请输入型号,多个型号用','隔开"
-                     v-model="listQuery.specifications" type="textarea" clearable>
+                     v-model="listQuery.specModel" type="textarea" clearable>
           </el-input>
           <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">查询</el-button>
           <el-button class="filter-item" icon="el-icon-delete" @click="handleReset">重置</el-button>
@@ -214,20 +214,20 @@
             </el-table>
 
 
-
+          </div>
+          <!-- 分页 -->
+          <div class="pagination-container">
+            <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange"
+                           :current-page="listQuery.page"
+                           :page-sizes="[10,20,30,50,1000]" :page-size="listQuery.limit"
+                           layout="total, sizes, prev, pager, next, jumper" :total="total">
+            </el-pagination>
           </div>
         </el-col>
       </el-row>
 
 
-      <!-- 分页 -->
-      <div class="pagination-container">
-        <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange"
-                       :current-page="listQuery.page"
-                       :page-sizes="[10,20,30,50,1000]" :page-size="listQuery.limit"
-                       layout="total, sizes, prev, pager, next, jumper" :total="total">
-        </el-pagination>
-      </div>
+
     </div>
 
   </div>
@@ -337,11 +337,33 @@
         method(this.listQuery)
           .then(response => {
             var list = [];
-            response.data.records.forEach(function (item) {
-              item.price = item.retailPrice;
-              list.push(item);
-            });
-            this.list = list;
+            // response.data.records.forEach(function (item) {
+            //   item.price = item.retailPrice
+            //   list.push(item)
+            // })
+            for (let i = 0; i <response.data.records.length ; i++) {
+              response.data.records[i].price=response.data.records[i].retailPrice
+              list.push(response.data.records[i])
+            }
+
+            if(this.listQuery.itemNo&&this.listQuery.itemNo!==''){
+              let queryArr=this.listQuery?.itemNo?.split('\n')
+              console.log(queryArr)
+              let clearArr=[]
+              for (let i = 0; i <queryArr.length ; i++) {
+                for (let j = 0; j <response.data.records.length ; j++) {
+                  if(response.data.records[j].itemNo===queryArr[i]){
+                    clearArr.push(response.data.records[j])
+                    console.log(queryArr[i],list[j].itemNo,clearArr,response.data.records[i])
+                    break
+                  }
+                }
+              }
+              this.list = clearArr
+              //console.log(this.list,clearArr)
+            }else{
+              this.list = list
+            }
             this.total = response.data.total;
             this.listLoading = false;
           })
@@ -433,8 +455,8 @@
   }
 
   .pagination-container {
-    position: absolute;
-    bottom: 20px;
+    /*position: absolute;*/
+    /*bottom: 20px;*/
     background-color: #fff;
   }
 

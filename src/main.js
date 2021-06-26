@@ -647,7 +647,7 @@ Vue.prototype.accAdd=function(data1, data2) {
    * 小数转换百分比数
    */
   Vue.prototype.toPercent=function(point){
-  var str=Number(point*100).toFixed(1);
+  var str=Number(point*100).toFixed(2);
   str+="%";
   return str;
   }
@@ -754,6 +754,69 @@ Vue.prototype.numberSort=new Proxy({}, {
   }
 })
 
+/**
+ * 数字3位加逗号
+ * @param num
+ * @returns {string}
+ */
+Vue.prototype.toThousands=function (num) {
+  let arr=num?.toString().split('.')
+  if(arr?.length>0){
+    num=arr[0]
+  }
+
+  num = (num || 0).toString()
+  let result = '';
+  while (num.length > 3) {
+    result = ',' + num.slice(-3) + result;
+    num = num.slice(0, num.length - 3);
+  }
+  if (num) { result = num + result; }
+  if(arr?.length>1) {
+    result+='.'+arr[1]
+  }
+  return result;
+}
+
+Vue.prototype.getNowWeek=function() {
+  let today=new Date()
+  let whatDay=today.getDay()
+  let before,after
+  if(7-whatDay===0){
+
+  }else{
+    before=Vue.prototype.fungetdate(7-whatDay)
+    after=Vue.prototype.fungetdate(-whatDay+1)
+  }
+  return{
+    before,after
+  }
+}
+
+Vue.prototype.fungetdate=function(count) {
+  var dd = new Date();
+  dd.setDate(dd.getDate() + count);//获取p_count天后的日期
+  var y = dd.getFullYear();
+  var m = dd.getMonth() + 1;//获取当前月份的日期
+  var d = dd.getDate();
+  return y + "-" + m + "-" + d;
+}
+
+Vue.prototype.getNowFormatDate=function () {
+  var date = new Date();
+  var seperator1 = "-";
+  var year = date.getFullYear();
+  var month = date.getMonth() + 1;
+  var strDate = date.getDate();
+  if (month >= 1 && month <= 9) {
+    month = "0" + month;
+  }
+  if (strDate >= 0 && strDate <= 9) {
+    strDate = "0" + strDate;
+  }
+  var currentdate = year + seperator1 + month + seperator1 + strDate;
+  return currentdate;
+}
 
 new Vue({
   el: '#app',
